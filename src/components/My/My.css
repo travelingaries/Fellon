@@ -1,0 +1,15 @@
+.container {
+	padding: 0 20px;
+}
+
+.nothingHere {
+	margin-top: 80%;
+}
+
+.nothingHere h4 {
+	font-size: 20px;
+}
+
+.nothingHere p {
+	text-align: center;
+}

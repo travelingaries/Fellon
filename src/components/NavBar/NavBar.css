@@ -2,3 +2,38 @@
 	height: 40px;
 }
 
+.navCenterText {
+	display:inline-block;
+	margin-top: 11px;
+	text-align: center;
+	font-size: 18px;
+}
+
+.myTabTabs {
+	width: 48%;
+	height: 50px;
+	display: inline-block;
+}
+
+.myTabTabs h3 {
+	font-size: 16px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	text-align:center;
+}
+
+.tabUnderline {
+	height: 100%;
+	width: 150px;
+	align-self: center;
+}
+
+#myUploadedTab {
+	float: left;
+}
+
+#myLikedTab {
+	float: right;
+	color: rgb(153,153,153);
+}

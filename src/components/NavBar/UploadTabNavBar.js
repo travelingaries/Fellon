@@ -21,7 +21,7 @@ class UploadTabNavBar extends Component {
 					</div>
 				</a>
 				<div style={{textAlign:"center",justifyContent:"center", alignItems:"center", marginRight:"38px",width:"100%"}}>
-					<h4 style={{display:"inline-block",marginTop:"10px",textAlign:"center"}}>영상업로드</h4>
+					<h4 className="navCenterText">영상업로드</h4>
 				</div>
 			</nav>
 		)
