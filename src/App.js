@@ -4,25 +4,33 @@ import './App.css';
 import { Route } from 'react-router-dom';
 
 import TabBar from './components/TabBar'
-import Home from './components/Home'
-import Profile from './components/Profile'
+import My from './components/My'
+import Upload from './components/Upload'
+import Notification from './components/Notification'
 
 class App extends Component {
+  constructor(){
+    super()
+    this.state = {
+      loggedIn: true
+    }
+  }
   render() {
-    const { loggedIn } = true;
 
     return (
         <div>
-        <div>
-          {loggedIn
-              ? (<Route path="/" exact component={Home} />)
-              : (<Route path="/" exact component={Home} />)
-          }
-          {loggedIn ? (
-            <Route path="/fav" exact component={Favorite}/>
-            ):null}
-        </div>
-        <TabBar />
+          <div>
+            {this.state.loggedIn
+              ? (<Route path="/" exact component={My} />)
+              : (<Route path="/" exact component={My} />)
+            }
+            {this.state.loggedIn ? (
+              <Route path="/upload" exact component={Upload}/>
+              ):null}
+            {this.state.loggedIn ? (
+              <Route path="/notification" exact component={Notification}/>
+              ):null}
+          </div>
         </div>
     );
   }
