@@ -1,0 +1,42 @@
+.startBackground {
+  background-image: url("../../images/imgLogin.png");
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+}
+
+.startContainer {
+  padding: 40px 25px;
+}
+
+h3.introHeading {
+  margin: 0;
+  color: white;
+}
+
+.logoImg {
+  margin-top: 22vh;
+}
+
+.descriptionText {
+  font-size: 16px;
+  color: white;
+}
+
+.startOptions {
+  text-decoration: none;
+  color: white;
+  margin: 0;
+}
+
+@media only screen and (max-width: 1080px) {
+  .startBackground {
+    background-image: url("../../images/imgLogin@3x.png");
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .startBackground {
+    background-image: url("../../images/imgLogin@2x.png");
+  }
+}

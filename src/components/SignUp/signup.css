@@ -1,0 +1,64 @@
+.startBackground {
+  background-image: url("../../images/imgLogin.png");
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+}
+
+.startContainer {
+  padding: 40px 25px;
+}
+
+h3.introHeading {
+  margin: 0;
+  color: white;
+}
+
+.logoImg {
+  margin-top: 22vh;
+}
+
+.descriptionText {
+  font-size: 16px;
+  color: white;
+}
+
+.startOptions {
+  text-decoration: none;
+  color: white;
+  margin: 0;
+}
+
+.consentSubmitButton {
+  border-radius: 100%;
+  width: 56px;
+  height: 56px;
+  background-color: rgb(221, 221, 221);
+  border: 0px solid grey;
+  color: white;
+  font-size: 20px;
+}
+
+.phoneNumberSubmitButton {
+  width: 154px;
+  height: 44px;
+  border-radius: 20px;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
+  border-radius: rgb(221, 221, 221);
+  color: rgb(221, 221, 221);
+  background-color: white;
+}
+
+@media only screen and (max-width: 1080px) {
+  .startBackground {
+    background-image: url("../../images/imgLogin@3x.png");
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .startBackground {
+    background-image: url("../../images/imgLogin@2x.png");
+  }
+}
