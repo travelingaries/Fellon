@@ -1,15 +1,42 @@
 .container {
-	padding: 0 20px;
+  padding: 0 20px;
 }
 
 .nothingHere {
-	margin-top: 80%;
+  margin-top: 80%;
 }
 
 .nothingHere h4 {
-	font-size: 20px;
+  font-size: 20px;
 }
 
 .nothingHere p {
-	text-align: center;
+  text-align: center;
+}
+
+.settingsModal {
+  margin-top: 50px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  max-width: 800px;
+  width: 100%;
+  height: 60%;
+  position: fixed;
+  top: 7%;
+  left: 0;
+  overflow: auto;
+  z-index: 2;
+  background-color: white;
+}
+.settingsModal:focus {
+  border: 1px solid #e0e0e0;
+}
+.settingsOverlay {
+  border: 1px solid #e0e0e0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 70%;
 }

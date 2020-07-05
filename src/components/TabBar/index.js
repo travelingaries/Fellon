@@ -68,7 +68,7 @@ class TabBar extends Component {
                   />
                 </div>
               </a>
-              <a href="/">
+              <a href="/profile">
                 <div className="tab">
                   <img
                     src={this.state.currentTab === 5 ? MyTabImgOn : MyTabImgOff}

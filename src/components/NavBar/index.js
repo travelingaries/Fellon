@@ -24,7 +24,13 @@ class NavBar extends Component {
     } else if (this.state.currentTab == 4) {
       return <NotificationTabNavBar />;
     } else if (this.state.currentTab == 5) {
-      return <MyTabNavBar />;
+      return (
+        <MyTabNavBar
+          handleOpenModal={this.props.handleOpenModal}
+          handleCloseModal={this.props.handleCloseModal}
+          showModal={this.state.showModal}
+        />
+      );
     }
   }
 }
