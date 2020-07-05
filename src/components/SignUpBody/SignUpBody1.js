@@ -8,7 +8,7 @@ import validator from "validator";
 
 import firebase from "../../config/config.js";
 import "../SignUp/signup.css";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import * as firebaseui from "firebaseui";
 
 firebase.auth().useDeviceLanguage();
 /*
@@ -38,6 +38,27 @@ class SignUpBody1 extends Component {
     //firebase.auth().onAuthStateChanged((user) => {
     //  this.setState({ isSignedIn: !!user });
     //});
+    // FirebaseUI config
+    var uiConfig = {
+      signInSuccessUrl: "/",
+      signInFlow: "redirect",
+      signInOptions: [
+        //Leave the lines as is for the providers you want to offer your users
+        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+      ],
+      // tosUrl and privacyPolicyUrl accept either url string or a callback function
+      // Terms of service url/callback
+      tosUrl: "",
+      // Privacy policy url/callback
+      privacyPolicyUrl: function () {
+        window.location.assign("");
+      },
+    };
+    // Initialize the FirebaseUI Widget using Firebase
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    // The start method will wait until the DOM is loaded
+    ui.start("#firebaseui-auth-container", uiConfig);
+
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       "phoneNumberSubmitButton",
       {
@@ -145,7 +166,6 @@ class SignUpBody1 extends Component {
             </Form>
           )}
         </Formik>
-        <div id="firebaseui-auth-container"></div>
       </div>
     );
   }

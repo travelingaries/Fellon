@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 
-import TabBar from "./components/TabBar";
+import Home from "./components/Home";
 import My from "./components/My";
 import Upload from "./components/Upload";
 import Notification from "./components/Notification";
@@ -43,10 +42,13 @@ class App extends Component {
       <div>
         <div className="outermost" style={{ maxWidth: "800px" }}>
           {this.state.user ? (
-            <Route path="/" exact component={My} />
+            <Route path="/" exact component={Home} />
           ) : (
             <Route path="/" exact component={Start} />
           )}
+          {this.state.user ? (
+            <Route path="/search" exact component={Home} />
+          ) : null}
           {this.state.user ? (
             <Route path="/upload" exact component={Upload} />
           ) : null}
@@ -54,12 +56,15 @@ class App extends Component {
             <Route path="/notification" exact component={Notification} />
           ) : null}
           {this.state.user ? (
-            <Route path="/signUp" exact component={SignUp} />
+            <Route path="/profile" exact component={My} />
+          ) : null}
+          {this.state.user ? (
+            <Route path="/signup" render={() => <Redirect to="/" />} />
           ) : (
-            <Route path="/signUp" exact component={SignUp} />
+            <Route path="/signup" exact component={SignUp} />
           )}
           {this.state.user ? (
-            <Route path="/" exact component={Login} />
+            <Route path="/login" render={() => <Redirect to="/" />} />
           ) : (
             <Route path="/login" exact component={Login} />
           )}

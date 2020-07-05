@@ -15,6 +15,7 @@ class SignUpBody extends Component {
     };
     this.handleChangeSignUpStage = this.handleChangeSignUpStage.bind(this);
   }
+  componentDidMount() {}
   handleChangeSignUpStage(moveTo, geoConsent) {
     this.setState({ currentSignUp: moveTo, geoConsent: true });
   }

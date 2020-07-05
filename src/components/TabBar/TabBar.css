@@ -1,44 +1,45 @@
 footer {
-	position: fixed;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	height: 40px;
-	background-color: white;
-	border-top: 1px solid rgb(238, 238, 238);
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 40px;
+  background-color: white;
+  border-top: 1px solid rgb(238, 238, 238);
+  max-width: 800px;
 }
 
 .tabBar {
-	height: 100px;
-	padding: 0 10px;
-	margin-top: 6px;
+  height: 100px;
+  padding: 0 10px;
+  margin-top: 6px;
 }
 
 .tab {
-	display: inline-block;
-	width: 33%;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
+  display: inline-block;
+  width: 19.5%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 #uploadTabTabBar {
-	height: 60px;
+  height: 60px;
 }
 
 .submitUpload {
-	font-weight: bold;
-	color: white;
-	text-decoration: none;
-	font-size: 12pt;
-	text-align:center;
-	padding-top: 12px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  font-size: 12pt;
+  text-align: center;
+  padding-top: 12px;
 }
 
 .notReady {
-	background-color: rgb(221,221,221);
+  background-color: rgb(221, 221, 221);
 }
 
 .ready {
-	background-color: yellow;
+  background-color: yellow;
 }
