@@ -8,7 +8,7 @@ import Upload from "./components/Upload";
 import Notification from "./components/Notification";
 import Start from "./components/start";
 import SignUp from "./components/SignUp";
-import Login from "./components/login";
+//import Login from "./components/login";
 
 import firebase from "./config/config.js";
 
@@ -20,7 +20,6 @@ class App extends Component {
       user: {},
     };
   }
-
   componentDidMount() {
     this.authListener();
   }
