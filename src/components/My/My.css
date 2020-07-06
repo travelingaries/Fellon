@@ -4,6 +4,8 @@
 
 .nothingHere {
   margin-top: 80%;
+  width: 100%;
+  max-width: 460px;
 }
 
 .nothingHere h4 {
@@ -18,7 +20,7 @@
   margin-top: 50px;
   border-radius: 5px;
   border: 1px solid #e0e0e0;
-  max-width: 800px;
+  max-width: 480px;
   width: 100%;
   height: 60%;
   position: fixed;

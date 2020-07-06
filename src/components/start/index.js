@@ -24,29 +24,15 @@ class Start extends Component {
           <a href="/signup" className="startOptions">
             <div
               style={{
-                width: "100%",
+                maxWidth: "320px",
                 height: "36px",
                 border: "1px solid white",
-                marginTop: "30vh",
+                marginTop: "35vh",
                 paddingBottom: "16px",
                 borderRadius: "5px",
               }}
             >
-              <p style={{ textAlign: "center" }}>가입하기</p>
-            </div>
-          </a>
-          <a href="/login" className="startOptions">
-            <div
-              style={{
-                width: "100%",
-                height: "36px",
-                border: "1px solid white",
-                marginTop: "2vh",
-                paddingBottom: "16px",
-                borderRadius: "5px",
-              }}
-            >
-              <p style={{ textAlign: "center" }}>로그인</p>
+              <p style={{ textAlign: "center" }}>가입하기 / 로그인</p>
             </div>
           </a>
         </div>

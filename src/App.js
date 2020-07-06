@@ -40,7 +40,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <div className="outermost" style={{ maxWidth: "800px" }}>
+        <div className="outermost" style={{ maxWidth: "480px" }}>
           {this.state.user ? (
             <Route path="/" exact component={Home} />
           ) : (
@@ -68,11 +68,6 @@ class App extends Component {
           )}
           {this.state.user ? null : (
             <Route path="/signup" exact component={SignUp} />
-          )}
-          {this.state.user ? (
-            <Route path="/login" render={() => <Redirect to="/" />} />
-          ) : (
-            <Route path="/login" exact component={Login} />
           )}
         </div>
       </div>

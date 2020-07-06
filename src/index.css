@@ -6,7 +6,7 @@ body {
 }
 
 div#root {
-  max-width: 800px;
+  max-width: 480px;
   border: 1px solid #e0e0e0;
   background-color: white;
   height: 99vh;
