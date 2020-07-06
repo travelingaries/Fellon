@@ -4,7 +4,24 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter, Switch } from "react-router-dom";
 import firebase from "./config/config";
-import * as firebaseui from "firebaseui";
+import * as serviceWorker from "./serviceWorker";
+
+import configureStore from "./config/configureStore";
+
+import { Provider, useSelector } from "react-redux";
+import {
+  reactReduxFirebase,
+  getFirebase,
+  isLoaded,
+} from "react-redux-firebase";
+
+// react-redux-firebase config
+const rrfConfig = {
+  useFirestoreForProfile: false,
+  attachAuthIsReady: true,
+};
+
+const store = configureStore();
 
 function initApp() {
   firebase.auth().onAuthStateChanged(
@@ -39,11 +56,30 @@ window.addEventListener("load", function () {
   initApp();
 });
 
-ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <App />
-    </Switch>
-  </BrowserRouter>,
-  document.getElementById("root")
-);
+function AuthIsLoaded({ children }) {
+  const auth = useSelector((state) => {
+    console.log(state.firebase.auth);
+    console.log(state);
+    return state.firebase.auth;
+  });
+  if (!isLoaded(auth)) return <div>Loading...</div>;
+  return children;
+}
+const renderApp = () =>
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter>
+        <Switch>
+          <App />
+        </Switch>
+      </BrowserRouter>
+    </Provider>,
+    document.getElementById("root")
+  );
+
+if (process.env.NODE_ENV !== "production" && module.hot) {
+  module.hot.accept("./App", renderApp);
+}
+renderApp();
+
+serviceWorker.unregister();

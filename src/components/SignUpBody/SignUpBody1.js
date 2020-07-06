@@ -10,20 +10,12 @@ import firebase from "../../config/config.js";
 import "../SignUp/signup.css";
 import * as firebaseui from "firebaseui";
 
-firebase.auth().useDeviceLanguage();
-/*
-var uiConfig = {
-  signInFlow: "popup",
-  signInOptions: [firebase.auth.PhoneAuthProvider.PROVIDER_ID],
-  callbacks: {
-    signInSuccess: () => false,
-  },
-};*/
+import { connect } from "react-redux";
 
-//firebase.initializeApp({
-//  apiKey: "AIzaSyBIcrrxo7p6NrLUw9__BCWahoOcL5DBaEU",
-//  authDomain: "localhost",
-//});
+import { signUp } from "../../actions";
+import { auth } from "firebase";
+
+firebase.auth().useDeviceLanguage();
 
 class SignUpBody1 extends Component {
   constructor(props) {
@@ -35,10 +27,6 @@ class SignUpBody1 extends Component {
   }
 
   componentDidMount() {
-    //firebase.auth().onAuthStateChanged((user) => {
-    //  this.setState({ isSignedIn: !!user });
-    //});
-    // FirebaseUI config
     var uiConfig = {
       signInSuccessUrl: "/",
       signInFlow: "redirect",
@@ -76,6 +64,13 @@ class SignUpBody1 extends Component {
     return isValidPhoneNumber;
   };
 
+  handleSignUpSubmit = async (values, actions) => {
+    actions.setSubmitting(true);
+    console.log(values);
+    await this.props.signUp(values, this.props.history);
+    actions.setSubmitting(false);
+  };
+
   handlePhoneNumberSubmit(phoneNumber) {
     var appVerifier = window.recaptchaVerifier;
     console.log("got here yeah");
@@ -96,7 +91,6 @@ class SignUpBody1 extends Component {
   render() {
     return (
       <div className="startContainer">
-        {this.state.isSignedIn ? <h3>Signed In!</h3> : <h3>NotSignedIn</h3>}
         <div id="firebaseui-auth-container"></div>
         <Formik
           initialValues={{
@@ -110,22 +104,6 @@ class SignUpBody1 extends Component {
         >
           {({ values, errors, isSubmitting }) => (
             <Form>
-              <div>
-                <Field
-                  type="text"
-                  name="phoneNumber"
-                  as={TextField}
-                  style={{ width: "100%" }}
-                  required
-                  placeholder="휴대폰 번호 입력"
-                />
-                <p style={{ color: "rgb(153,153,153)" }}>
-                  가입하면 이용 약관에 동의하며 개인정보 보호정책을 읽고
-                  이해했음을 확인하는 것입니다. 회원님의 전화번호를 확인하기
-                  위해 문자가 전송되며 문자 요금이 부과될 수 있습니다.
-                </p>
-              </div>
-
               <div
                 style={{
                   display: "flex",
@@ -141,6 +119,8 @@ class SignUpBody1 extends Component {
                   className="phoneNumberSubmitButton g-recaptcha"
                   id="phoneNumberSubmitButton"
                   style={{
+                    width: "1px",
+                    opacity: "0.01",
                     border: "1px solid rgb(221,221,221)",
                     backgroundColor:
                       this.validatePhoneNumber(values.phoneNumber) &&
@@ -170,4 +150,11 @@ class SignUpBody1 extends Component {
     );
   }
 }
+
+const mapStateToProps = ({ auth }) => ({
+  //  loading: auth.loading,
+  //  error: auth.error,
+});
+
 export default SignUpBody1;
+//export default connect(mapStateToProps, { signUp })(SignUpBody1);

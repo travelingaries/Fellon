@@ -48,19 +48,25 @@ class App extends Component {
           )}
           {this.state.user ? (
             <Route path="/search" exact component={Home} />
-          ) : null}
+          ) : (
+            <Route path="/search" render={() => <Redirect to="/" />} />
+          )}
           {this.state.user ? (
             <Route path="/upload" exact component={Upload} />
-          ) : null}
+          ) : (
+            <Route path="/upload" render={() => <Redirect to="/" />} />
+          )}
           {this.state.user ? (
             <Route path="/notification" exact component={Notification} />
-          ) : null}
+          ) : (
+            <Route path="/notification" render={() => <Redirect to="/" />} />
+          )}
           {this.state.user ? (
             <Route path="/profile" exact component={My} />
-          ) : null}
-          {this.state.user ? (
-            <Route path="/signup" render={() => <Redirect to="/" />} />
           ) : (
+            <Route path="/profile" render={() => <Redirect to="/" />} />
+          )}
+          {this.state.user ? null : (
             <Route path="/signup" exact component={SignUp} />
           )}
           {this.state.user ? (

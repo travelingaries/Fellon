@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TabBar from "../TabBar";
 import NavBar from "../NavBar";
+import HomeBody from "./HomeBody";
 
 class Home extends Component {
   constructor() {
@@ -13,7 +14,7 @@ class Home extends Component {
     return (
       <div className="regular-index">
         <NavBar currentTab={this.state.currentTab} />
-        <h1>Welcome Home</h1>
+        <HomeBody />
         <TabBar currentTab={this.state.currentTab} />
       </div>
     );
