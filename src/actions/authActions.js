@@ -1,103 +1,102 @@
-import * as actions from "./actionTypes";
+import {
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGIN_FAILURE,
+  LOGOUT_REQUEST,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAILURE,
+  VERIFY_REQUEST,
+  VERIFY_SUCCESS,
+} from "../actions/actionTypes";
+
+import firebase from "../config/config.js";
 import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
+import { reduxFirestore, getFirestore } from "redux-firestore";
 
-import profilePic from "../images/icoBack.png";
-
-export const login = ({ phoneNumber, appVerifier }, history) => async (
-  dispatch,
-  getState,
-  { getFirebase, getFirestore }
-) => {
-  const firebase = getFirebase();
-  dispatch({ type: actions.AUTH_START });
-  try {
-    console.log(phoneNumber);
-    await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
-
-    dispatch({ type: actions.AUTH_SUCCESS });
-
-    history.push("/");
-  } catch (err) {
-    console.log(err);
-    dispatch({ type: actions.AUTH_FAIL, payload: err.message });
-  }
-
-  dispatch({ type: actions.AUTH_END });
+const requestLogin = () => {
+  return {
+    type: LOGIN_REQUEST,
+  };
+};
+const receiveLogin = (user) => {
+  return {
+    type: LOGIN_SUCCESS,
+    user,
+  };
+};
+const loginError = () => {
+  return {
+    type: LOGIN_FAILURE,
+  };
+};
+const requestLogout = () => {
+  return {
+    type: LOGOUT_REQUEST,
+  };
+};
+const receiveLogout = (user) => {
+  return {
+    type: LOGOUT_SUCCESS,
+    user,
+  };
+};
+const logoutError = () => {
+  return {
+    type: LOGOUT_FAILURE,
+  };
+};
+const verifyRequest = () => {
+  return {
+    type: VERIFY_REQUEST,
+  };
+};
+const verifySuccess = (user) => {
+  return {
+    type: VERIFY_SUCCESS,
+    user,
+  };
 };
 
-export const signUp = ({ phoneNumber, appVerifier }, history) => async (
-  dispatch,
-  getState,
-  { getFirebase, getFirestore }
-) => {
-  const firebase = getFirebase();
-
-  dispatch({ type: actions.AUTH_START });
+export const loginUser = (phoneNumber, appVerifier) => (dispatch) => {
+  dispatch(requestLogin());
   try {
-    await firebase
+    firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber, appVerifier)
-      .then(function (confirmationResult) {
-        // SMS sent. Prompt user to type the code from the message, then sign the user in with confirmationResult.confirm(code)
-        window.confirmationResult = confirmationResult;
-      })
-      .catch(function (error) {
-        // Error; SMS not sent
-        console.log("error: ", error);
-        //grecap;
+      .then((user) => {
+        dispatch(receiveLogin(user));
       });
-
-    const user = firebase.auth().currentUser;
-
-    const newInfo = {
-      phoneNumber: phoneNumber,
-    };
-
-    history.push({
-      pathname: "/",
-      state: newInfo,
-    });
-  } catch (err) {
-    dispatch({ type: actions.AUTH_FAIL, payload: err.message });
-  }
-  dispatch({ type: actions.AUTH_END });
-};
-
-export const logout = (history) => async (
-  dispatch,
-  getState,
-  { getFirebase }
-) => {
-  const firebase = getFirebase();
-
-  try {
-    await firebase.auth().signOut();
-
-    dispatch({ type: actions.OVERWRITE_CURRENT_USER, payload: {} });
-    history.push("/");
-  } catch (err) {
-    console.log(err.message);
-  }
-};
-
-export const getCurrentUserInfo = () => async (
-  dispatch,
-  getState,
-  { getFirebase, getFirestore }
-) => {
-  const firebase = getFirebase();
-  //const firestore = getFirestore();
-  const user = firebase.auth().currentUser;
-
-  try {
-    const newInfo = {
-      phoneNumber: user.phoneNumber,
-    };
-    dispatch({
-      type: actions.OVERWRITE_CURRENT_USER,
-      payload: newInfo,
-    });
   } catch (err) {
     console.log(err);
+    dispatch({ type: LOGIN_FAILURE, payload: err.message });
+  }
+};
+
+export const logoutUser = () => (dispatch) => {
+  dispatch(requestLogout());
+  try {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        dispatch(receiveLogout());
+      });
+  } catch (err) {
+    console.log(err.message);
+    dispatch({ type: LOGOUT_FAILURE, payload: err.message });
+  }
+};
+
+export const verifyAuth = () => (dispatch) => {
+  dispatch(verifyRequest());
+  try {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user !== null) {
+        dispatch(receiveLogin(user));
+      }
+      dispatch(verifySuccess());
+    });
+  } catch (err) {
+    console.log(err.message);
   }
 };

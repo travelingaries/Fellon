@@ -4,9 +4,8 @@ import App from "./App";
 import "./index.css";
 import { BrowserRouter, Switch } from "react-router-dom";
 import firebase from "./config/config";
-//import * as serviceWorker from "./serviceWorker";
 
-import configureStore from "./config/configureStore";
+import configureStore from "./store/configureStore";
 
 import { Provider, useSelector } from "react-redux";
 import {
@@ -14,6 +13,8 @@ import {
   getFirebase,
   isLoaded,
 } from "react-redux-firebase";
+
+import * as serviceWorker from "./serviceWorker";
 
 // react-redux-firebase config
 const rrfConfig = {
@@ -65,21 +66,19 @@ function AuthIsLoaded({ children }) {
   if (!isLoaded(auth)) return <div>Loading...</div>;
   return children;
 }
-//const renderApp = () =>
-ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Switch>
+const renderApp = () =>
+  ReactDOM.render(
+    <Provider store={store}>
+      <BrowserRouter>
         <App />
-      </Switch>
-    </BrowserRouter>
-  </Provider>,
-  document.getElementById("root")
-);
+      </BrowserRouter>
+    </Provider>,
+    document.getElementById("root")
+  );
 
-//if (process.env.NODE_ENV !== "production" && module.hot) {
-//  module.hot.accept("./App", renderApp);
-//}
-//renderApp();
+if (process.env.NODE_ENV !== "production" && module.hot) {
+  module.hot.accept("./App", renderApp);
+}
+renderApp();
 
-//serviceWorker.unregister();
+serviceWorker.unregister();

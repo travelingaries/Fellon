@@ -10,7 +10,7 @@ import firebase from "../../config/config.js";
 
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { logout } from "../../actions";
+import { logoutUser } from "../../actions";
 
 class My extends Component {
   constructor() {
@@ -33,13 +33,14 @@ class My extends Component {
   }
 
   logout = () => {
-    //this.props.logout(this.props.history);
+    const { dispatch } = this.props;
     firebase
       .auth()
       .signOut()
       .then(
         function () {
           console.log("Signed Out");
+          dispatch(logoutUser());
         },
         function (error) {
           console.error("Sign Out Error", error);
@@ -131,8 +132,11 @@ class My extends Component {
   }
 }
 
-//const mapStateToProps = ({ currentUser }) => ({
-//  currentUser,
-//});
-//export default connect(mapStateToProps, { logout })(withRouter(My));
-export default My;
+function mapStateToProps(state) {
+  return {
+    isLoggingOut: state.auth.isLoggingOut,
+    logoutError: state.auth.logoutError,
+  };
+}
+
+export default connect(mapStateToProps)(My);

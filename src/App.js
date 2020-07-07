@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, Switch } from "react-router-dom";
 
 import Home from "./components/Home";
 import My from "./components/My";
@@ -12,18 +12,23 @@ import SignUp from "./components/SignUp";
 
 import firebase from "./config/config.js";
 
+import { connect } from "react-redux";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+
 class App extends Component {
-  constructor() {
-    super();
+  /*
+  constructor(props) {
+    super(props);
     this.state = {
       loggedIn: false,
       user: {},
     };
-  }
+  }*/
   componentDidMount() {
-    this.authListener();
+    //    this.authListener();
   }
-
+  /*
   authListener() {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -34,44 +39,48 @@ class App extends Component {
         //  localStorage.removeItem('user');
       }
     });
-  }
+  }*/
 
   render() {
+    const { isAuthenticated, isVerifying } = this.props;
+    console.log("logging state: ", isAuthenticated);
     return (
       <div>
         <div className="outermost" style={{ maxWidth: "480px" }}>
-          {this.state.user ? (
-            <Route path="/" exact component={Home} />
-          ) : (
-            <Route path="/" exact component={Start} />
-          )}
-          {this.state.user ? (
-            <Route path="/search" exact component={Home} />
-          ) : (
-            <Route path="/search" render={() => <Redirect to="/" />} />
-          )}
-          {this.state.user ? (
-            <Route path="/upload" exact component={Upload} />
-          ) : (
-            <Route path="/upload" render={() => <Redirect to="/" />} />
-          )}
-          {this.state.user ? (
-            <Route path="/notification" exact component={Notification} />
-          ) : (
-            <Route path="/notification" render={() => <Redirect to="/" />} />
-          )}
-          {this.state.user ? (
-            <Route path="/profile" exact component={My} />
-          ) : (
-            <Route path="/profile" render={() => <Redirect to="/" />} />
-          )}
-          {this.state.user ? null : (
-            <Route path="/signup" exact component={SignUp} />
-          )}
+          <Switch>
+            <ProtectedRoute
+              exact
+              path="/"
+              component={Home}
+              isAuthenticated={isAuthenticated}
+              isVerifying={isVerifying}
+            />
+            <Route path="/start" component={Start} />
+          </Switch>
+          <Switch>
+            <ProtectedRoute
+              exact
+              path="/profile"
+              component={My}
+              isAuthenticated={isAuthenticated}
+              isVerifying={isVerifying}
+            />
+            <Route path="/start" component={Start} />
+          </Switch>
+          <Switch>
+            <Route path="/signup" component={SignUp} />
+          </Switch>
         </div>
       </div>
     );
   }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    isAuthenticated: state.auth.isAuthenticated,
+    isVerifying: state.auth.isVerifying,
+  };
+}
+
+export default connect(mapStateToProps)(App);

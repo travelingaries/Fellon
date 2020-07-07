@@ -9,6 +9,8 @@ import firebase from "../config/config.js";
 import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
 import { reduxFirestore, getFirestore } from "redux-firestore";
 
+import { verifyAuth } from "../actions";
+
 export default function configureStore(preloadedState) {
   const middlewares = [loggerMiddleware, thunkMiddleware];
   const middlewareEnhancer = applyMiddleware(...middlewares);
@@ -22,16 +24,7 @@ export default function configureStore(preloadedState) {
   const composedEnhancers = composeWithDevTools(...enhancers);
 
   const store = createStore(rootReducers, preloadedState, composedEnhancers);
-  /*const store = createStore(
-    rootReducers,
-    composedEnhancers(
-      reactReduxFirebase(firebase, rrfConfig),
-      reduxFirestore(firebase),
-      applyMiddleware(
-        thunkMiddleware.withExtraArgument({ getFirebase, getFirestore })
-      )
-    )
-  );*/
+  store.dispatch(verifyAuth());
 
   if (process.env.NODE_ENV !== "production" && module.hot) {
     module.hot.accept("../reducers", () => store.replaceReducer(rootReducers));

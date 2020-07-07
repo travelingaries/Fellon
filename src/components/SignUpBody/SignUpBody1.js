@@ -12,19 +12,20 @@ import * as firebaseui from "firebaseui";
 
 import { connect } from "react-redux";
 
-import { signUp } from "../../actions";
-import { auth } from "firebase";
+import { loginUser } from "../../actions";
 
 firebase.auth().useDeviceLanguage();
 
 class SignUpBody1 extends Component {
+  /*
   constructor(props) {
     super(props);
     this.state = {
       currentTab: this.props.currentTab,
       isSignedIn: false,
     };
-  }
+  }*/
+  state = { phoneNumber: "" };
 
   componentDidMount() {
     var uiConfig = {
@@ -72,14 +73,19 @@ class SignUpBody1 extends Component {
   };
 
   handlePhoneNumberSubmit(phoneNumber) {
+    const { dispatch } = this.props;
+
     var appVerifier = window.recaptchaVerifier;
-    console.log("got here yeah");
+
     firebase
       .auth()
       .signInWithPhoneNumber(phoneNumber, appVerifier)
       .then(function (confirmationResult) {
         // SMS sent. Prompt user to type the code from the message, then sign the user in with confirmationResult.confirm(code)
         window.confirmationResult = confirmationResult;
+      })
+      .then(() => {
+        dispatch(loginUser(phoneNumber, appVerifier));
       })
       .catch(function (error) {
         // Error; SMS not sent
@@ -151,10 +157,13 @@ class SignUpBody1 extends Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({
-  //  loading: auth.loading,
-  //  error: auth.error,
-});
+function mapStateToProps(state) {
+  return {
+    isLoggingIn: state.auth.isLoggingIn,
+    loginError: state.auth.loginError,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
 
-export default SignUpBody1;
-//export default connect(mapStateToProps, { signUp })(SignUpBody1);
+//export default SignUpBody1;
+export default connect(mapStateToProps)(SignUpBody1);
