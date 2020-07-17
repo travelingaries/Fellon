@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
 import SignUpNavBar0 from "./SignUpNavBar0.js";
+import LoginNavBar from "./LoginNavBar.js";
 //import UploadTabNavBar from './UploadTabNavBar'
 //import NotificationTabNavBar from './NotificationTabNavBar'
 
@@ -15,11 +16,11 @@ class SignUpNavBar extends Component {
     };
   }
   render() {
-    if (this.state.currentSignUp == 0) {
+    if (this.state.currentSignUp === 0) {
       return <SignUpNavBar0 />;
-    }
-    //else if(this.state.currentTab==2) { return <UploadTabNavBar /> }
-    //else if(this.state.currentTab==3) { return <NotificationTabNavBar /> }
+    } else if (this.state.currentTab === 1) {
+      return <SignUpNavBar0 />;
+    } else return <LoginNavBar />;
   }
 }
 

@@ -54,27 +54,36 @@ class SignUpBody0 extends Component {
             <Form>
               <div>
                 <Field type="checkbox" name="consent1" as={Checkbox} required />
-                <h4 style={{ display: "inline", marginLeft: "3px" }}>
+                <h4
+                  className="summaries"
+                  style={{ display: "inline", marginLeft: "3px" }}
+                >
                   {" "}
                   [필수] 서비스 이용 약관 동의
                 </h4>
               </div>
               <div>
                 <Field type="checkbox" name="consent2" as={Checkbox} required />
-                <h4 style={{ display: "inline", marginLeft: "3px" }}>
+                <h4
+                  className="summaries"
+                  style={{ display: "inline", marginLeft: "3px" }}
+                >
                   {" "}
                   [필수] 개인정보 수집 및 이용 동의
                 </h4>
               </div>
               <div>
                 <Field type="checkbox" name="geoConsent" as={Checkbox} />
-                <h4 style={{ display: "inline", marginLeft: "3px" }}>
+                <h4
+                  className="summaries"
+                  style={{ display: "inline", marginLeft: "3px" }}
+                >
                   {" "}
                   [선택] 위치 정보 수집 및 이용 동의
                 </h4>
               </div>
 
-              <div style={{ position: "fixed", bottom: "77px", right: "64px" }}>
+              <div className="nextSignUpButton">
                 <Button
                   disabled={isSubmitting}
                   type="submit"

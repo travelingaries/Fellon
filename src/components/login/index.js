@@ -1,16 +1,56 @@
 import React, { Component } from "react";
-import LoginNavBar from "../SignUpNavBar/LoginNavBar.js";
+import { NavLink } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import Button from "../styledComponents/Button.js";
-import { Checkbox, Radio, rgbToHex, TextField } from "@material-ui/core";
 import * as yup from "yup";
+import { Checkbox, Radio, rgbToHex, TextField } from "@material-ui/core";
 import validator from "validator";
 
 import firebase from "../../config/config.js";
+import SignUpNavBar from "../SignUpNavBar";
+import "../SignUp/signup.css";
+import * as firebaseui from "firebaseui";
+
+import { connect } from "react-redux";
+
+import { loginUser } from "../../actions";
+
+firebase.auth().useDeviceLanguage();
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
+  state = { phoneNumber: "" };
+
+  componentDidMount() {
+    var uiConfig = {
+      signInSuccessUrl: "/",
+      signInFlow: "redirect",
+      signInOptions: [
+        //Leave the lines as is for the providers you want to offer your users
+        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+      ],
+      // tosUrl and privacyPolicyUrl accept either url string or a callback function
+      // Terms of service url/callback
+      tosUrl: "",
+      // Privacy policy url/callback
+      privacyPolicyUrl: function () {
+        window.location.assign("");
+      },
+    };
+    // Initialize the FirebaseUI Widget using Firebase
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    // The start method will wait until the DOM is loaded
+    ui.start("#firebaseui-auth-container", uiConfig);
+
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+      "phoneNumberSubmitButton",
+      {
+        size: "invisible",
+        callback: function (response) {
+          //reCAPTCHA solved, allow signInWithPhoneNumber
+          console.log("recaptcha solved");
+        },
+      }
+    );
   }
 
   validatePhoneNumber = (number) => {
@@ -18,11 +58,41 @@ class Login extends Component {
     return isValidPhoneNumber;
   };
 
+  handleSignUpSubmit = async (values, actions) => {
+    actions.setSubmitting(true);
+    console.log(values);
+    await this.props.signUp(values, this.props.history);
+    actions.setSubmitting(false);
+  };
+
+  handlePhoneNumberSubmit(phoneNumber) {
+    const { dispatch } = this.props;
+
+    var appVerifier = window.recaptchaVerifier;
+
+    firebase
+      .auth()
+      .signInWithPhoneNumber(phoneNumber, appVerifier)
+      .then(function (confirmationResult) {
+        // SMS sent. Prompt user to type the code from the message, then sign the user in with confirmationResult.confirm(code)
+        window.confirmationResult = confirmationResult;
+      })
+      .then(() => {
+        dispatch(loginUser(phoneNumber, appVerifier));
+      })
+      .catch(function (error) {
+        // Error; SMS not sent
+        console.log("error: ", error);
+        //grecap;
+      });
+  }
+
   render() {
     return (
       <div>
-        <LoginNavBar />
+        <SignUpNavBar currentSignUp={1} />
         <div className="startContainer">
+          <div id="firebaseui-auth-container"></div>
           <Formik
             initialValues={{
               phoneNumber: "",
@@ -35,22 +105,6 @@ class Login extends Component {
           >
             {({ values, errors, isSubmitting }) => (
               <Form>
-                <div>
-                  <Field
-                    type="text"
-                    name="phoneNumber"
-                    as={TextField}
-                    style={{ width: "100%" }}
-                    required
-                    placeholder="휴대폰 번호 입력"
-                  />
-                  <p style={{ color: "rgb(153,153,153)" }}>
-                    가입하면 이용 약관에 동의하며 개인정보 보호정책을 읽고
-                    이해했음을 확인하는 것입니다. 회원님의 전화번호를 확인하기
-                    위해 문자가 전송되며 문자 요금이 부과될 수 있습니다.
-                  </p>
-                </div>
-
                 <div
                   style={{
                     display: "flex",
@@ -63,8 +117,11 @@ class Login extends Component {
                   <Button
                     disabled={isSubmitting}
                     type="submit"
-                    className="phoneNumberSubmitButton"
+                    className="phoneNumberSubmitButton g-recaptcha"
+                    id="phoneNumberSubmitButton"
                     style={{
+                      width: "1px",
+                      opacity: "0.01",
                       border: "1px solid rgb(221,221,221)",
                       backgroundColor:
                         this.validatePhoneNumber(values.phoneNumber) &&
@@ -73,10 +130,16 @@ class Login extends Component {
                           ? "rgb(255,85,117)"
                           : "white",
                     }}
-                    onClick={() => {
-                      this.props.handleChangeSignUpStage(1, true);
-                      firebase.auth().signOut();
-                    }}
+                    // localhost key
+                    data-sitekey="6LdGxqoZAAAAANbMNJ9l8RI3khTNHGuGtz_JCTKa"
+                    // fellon firebase hosting key
+                    //data-sitekey="6LclyqoZAAAAAIej5OJN4Stv5-5eA7mH94oG8bMl"
+                    onClick={() =>
+                      this.handlePhoneNumberSubmit(values.phoneNumber)
+                    }
+                    data-callback={() =>
+                      this.handlePhoneNumberSubmit(values.phoneNumber)
+                    }
                   >
                     인증번호 요청하기
                   </Button>
@@ -90,4 +153,12 @@ class Login extends Component {
   }
 }
 
-export default Login;
+function mapStateToProps(state) {
+  return {
+    isLoggingIn: state.auth.isLoggingIn,
+    loginError: state.auth.loginError,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
+
+export default connect(mapStateToProps)(Login);

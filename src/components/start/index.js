@@ -26,7 +26,7 @@ class Start extends Component {
               <p style={{ textAlign: "center" }}>가입하기</p>
             </div>
           </a>
-          <a href="/signup" className="startOptions">
+          <a href="/login" className="startOptions">
             <div className="startOptionButton2Div">
               <p style={{ textAlign: "center" }}>로그인</p>
             </div>

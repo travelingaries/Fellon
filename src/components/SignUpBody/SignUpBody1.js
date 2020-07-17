@@ -17,14 +17,6 @@ import { loginUser } from "../../actions";
 firebase.auth().useDeviceLanguage();
 
 class SignUpBody1 extends Component {
-  /*
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentTab: this.props.currentTab,
-      isSignedIn: false,
-    };
-  }*/
   state = { phoneNumber: "" };
 
   componentDidMount() {
@@ -165,5 +157,4 @@ function mapStateToProps(state) {
   };
 }
 
-//export default SignUpBody1;
 export default connect(mapStateToProps)(SignUpBody1);

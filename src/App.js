@@ -8,7 +8,7 @@ import Upload from "./components/Upload";
 import Notification from "./components/Notification";
 import Start from "./components/start";
 import SignUp from "./components/SignUp";
-//import Login from "./components/login";
+import Login from "./components/login";
 
 import firebase from "./config/config.js";
 
@@ -17,29 +17,7 @@ import { connect } from "react-redux";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 class App extends Component {
-  /*
-  constructor(props) {
-    super(props);
-    this.state = {
-      loggedIn: false,
-      user: {},
-    };
-  }*/
-  componentDidMount() {
-    //    this.authListener();
-  }
-  /*
-  authListener() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({ user: user });
-        //  localStorage.setItem('user',user.uid);
-      } else {
-        this.setState({ user: null });
-        //  localStorage.removeItem('user');
-      }
-    });
-  }*/
+  componentDidMount() {}
 
   render() {
     const { isAuthenticated, isVerifying } = this.props;
@@ -85,6 +63,7 @@ class App extends Component {
                 isVerifying={isVerifying}
               />
               <Route path="/signup" component={SignUp} />
+              <Route path="/login" component={Login} />
             </Switch>
           </div>
         </div>
