@@ -33,7 +33,6 @@ class MyTabNavBar extends Component {
               textAlign: "center",
               justifyContent: "center",
               alignItems: "center",
-              marginRight: "38px",
               width: "100%",
             }}
           >

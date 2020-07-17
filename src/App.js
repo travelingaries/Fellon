@@ -46,30 +46,47 @@ class App extends Component {
     console.log("logging state: ", isAuthenticated);
     return (
       <div>
-        <div className="outermost" style={{ maxWidth: "480px" }}>
-          <Switch>
-            <ProtectedRoute
-              exact
-              path="/"
-              component={Home}
-              isAuthenticated={isAuthenticated}
-              isVerifying={isVerifying}
-            />
-            <Route path="/start" component={Start} />
-          </Switch>
-          <Switch>
-            <ProtectedRoute
-              exact
-              path="/profile"
-              component={My}
-              isAuthenticated={isAuthenticated}
-              isVerifying={isVerifying}
-            />
-            <Route path="/start" component={Start} />
-          </Switch>
-          <Switch>
-            <Route path="/signup" component={SignUp} />
-          </Switch>
+        <div
+          className="outermostContainer"
+          style={{
+            width: "100%",
+            textAlign: "center",
+            backgroundContainer: "rgb(221,221,221)",
+          }}
+        >
+          <div
+            className="outermost"
+            style={{
+              maxWidth: "480px",
+              display: "inline-block",
+              margin: "0 auto",
+              textAlign: "left",
+              display: "flex",
+              justifyContent: "center",
+              backgroundColor: "white",
+              height: "99vh",
+              border: "1px solid #e0e0e0",
+            }}
+          >
+            <Switch>
+              <Route path="/start" component={Start} />
+              <ProtectedRoute
+                exact
+                path="/"
+                component={Home}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
+              <ProtectedRoute
+                exact
+                path="/profile"
+                component={My}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
+              <Route path="/signup" component={SignUp} />
+            </Switch>
+          </div>
         </div>
       </div>
     );

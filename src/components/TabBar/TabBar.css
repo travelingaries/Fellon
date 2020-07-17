@@ -1,12 +1,13 @@
 footer {
   position: fixed;
   bottom: 0px;
-  left: 0px;
-  right: 0px;
+  left: 0;
+  right: 0;
   height: 40px;
   background-color: white;
   border-top: 1px solid rgb(238, 238, 238);
-  max-width: 480px;
+  max-width: 460px;
+  margin: 0 auto;
 }
 
 .tabBar {

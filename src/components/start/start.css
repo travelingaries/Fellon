@@ -1,13 +1,16 @@
-.startBackground {
+.startBackgroundStart {
   background-image: url("../../images/imgLogin.png");
+  background-size: cover;
   width: 100vw;
-  height: 100vh;
+  height: 99vh;
   background-repeat: no-repeat;
 }
 
 .startContainer {
   padding: 40px 25px;
-  max-width: 480px;
+  max-width: 86vw;
+  width: 100%;
+  margin-left: 0;
 }
 
 h3.introHeading {
@@ -30,14 +33,24 @@ h3.introHeading {
   margin: 0;
 }
 
-@media only screen and (max-width: 1080px) {
-  .startBackground {
-    background-image: url("../../images/imgLogin@3x.png");
-  }
+.startOptionButtonDiv {
+  max-width: 420px;
+  width: 100%;
+  min-width: 256px;
+  height: 36px;
+  border: 1px solid white;
+  margin-top: 25vh;
+  padding-bottom: 16px;
+  border-radius: 5px;
 }
 
-@media only screen and (max-width: 750px) {
-  .startBackground {
-    background-image: url("../../images/imgLogin@2x.png");
-  }
+.startOptionButton2Div {
+  max-width: 420px;
+  width: 100%;
+  min-width: 256px;
+  height: 36px;
+  border: 1px solid white;
+  margin-top: 3vh;
+  padding-bottom: 16px;
+  border-radius: 5px;
 }

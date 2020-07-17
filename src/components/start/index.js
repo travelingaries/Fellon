@@ -10,7 +10,7 @@ class Start extends Component {
   }
   render() {
     return (
-      <div className="startBackground">
+      <div className="startBackgroundStart">
         <div className="startContainer">
           <h3 className="introHeading">
             펠롱 -
@@ -22,17 +22,13 @@ class Start extends Component {
             숏클립 기반 펠로우들을 만날 수 있는 살롱
           </p>
           <a href="/signup" className="startOptions">
-            <div
-              style={{
-                maxWidth: "320px",
-                height: "36px",
-                border: "1px solid white",
-                marginTop: "35vh",
-                paddingBottom: "16px",
-                borderRadius: "5px",
-              }}
-            >
-              <p style={{ textAlign: "center" }}>가입하기 / 로그인</p>
+            <div className="startOptionButtonDiv">
+              <p style={{ textAlign: "center" }}>가입하기</p>
+            </div>
+          </a>
+          <a href="/signup" className="startOptions">
+            <div className="startOptionButton2Div">
+              <p style={{ textAlign: "center" }}>로그인</p>
             </div>
           </a>
         </div>

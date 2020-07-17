@@ -1,6 +1,7 @@
 .navBar {
   height: 40px;
   max-width: 480px;
+  width: 480px;
 }
 
 .navCenterText {
@@ -37,4 +38,94 @@
 #myLikedTab {
   float: right;
   color: rgb(153, 153, 153);
+}
+
+@media only screen and (max-width: 450px) {
+  .navBar {
+    width: 450px;
+  }
+}
+@media only screen and (max-width: 440px) {
+  .navBar {
+    width: 440px;
+  }
+}
+
+@media only screen and (max-width: 430px) {
+  .navBar {
+    width: 430px;
+  }
+}
+
+@media only screen and (max-width: 420px) {
+  .navBar {
+    width: 420px;
+  }
+}
+
+@media only screen and (max-width: 410px) {
+  .navBar {
+    width: 410px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .navBar {
+    width: 400px;
+  }
+}
+@media only screen and (max-width: 390px) {
+  .navBar {
+    width: 390px;
+  }
+}
+@media only screen and (max-width: 380px) {
+  .navBar {
+    width: 380px;
+  }
+}
+@media only screen and (max-width: 375px) {
+  .navBar {
+    width: 375px;
+  }
+}
+@media only screen and (max-width: 370px) {
+  .navBar {
+    width: 370px;
+  }
+}
+@media only screen and (max-width: 360px) {
+  .navBar {
+    width: 360px;
+  }
+}
+@media only screen and (max-width: 350px) {
+  .navBar {
+    width: 350px;
+  }
+}
+@media only screen and (max-width: 340px) {
+  .navBar {
+    width: 340px;
+  }
+}
+@media only screen and (max-width: 330px) {
+  .navBar {
+    width: 330px;
+  }
+}
+@media only screen and (max-width: 320px) {
+  .navBar {
+    width: 320px;
+  }
+}
+@media only screen and (max-width: 310px) {
+  .navBar {
+    width: 310px;
+  }
+}
+@media only screen and (max-width: 300px) {
+  .navBar {
+    width: 300px;
+  }
 }
