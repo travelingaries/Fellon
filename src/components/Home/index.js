@@ -46,7 +46,7 @@ class Home extends Component {
       .get()
       .then((doc) => {
         try {
-          if (doc.username) {
+          if (doc.data().username) {
           } else {
             console.log("user has no username data");
             window.location.href = "/editProfile";
@@ -61,33 +61,6 @@ class Home extends Component {
     this.createNewUserData(() => {
       this.moveToEditProfile();
     });
-
-    // Create user profile if first time
-    /*    firestore
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) {
-          // Create new user document
-          const userData = {
-            phoneNumber,
-          };
-          return firestore
-            .collection("users")
-            .doc(firebase.auth().currentUser.uid)
-            .set(userData)
-            .then(() => {
-              console.log(
-                `new user ${firebase.auth().currentUser.uid} was created`
-              );
-              dispatch(loginUser(phoneNumber, appVerifier));
-            });
-        } else {
-          console.log("User already exists in database");
-          dispatch(loginUser(phoneNumber, appVerifier));
-        }
-      });*/
 
     return (
       <div className="regular-index">

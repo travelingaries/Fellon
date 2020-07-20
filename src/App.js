@@ -9,6 +9,7 @@ import Notification from "./components/Notification";
 import Start from "./components/start";
 import SignUp from "./components/SignUp";
 import Login from "./components/login";
+import EditProfile from "./components/EditProfile";
 
 import firebase from "./config/config.js";
 
@@ -57,6 +58,13 @@ class App extends Component {
                 exact
                 path="/profile"
                 component={My}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
+              <ProtectedRoute
+                exact
+                path="/editProfile"
+                component={EditProfile}
                 isAuthenticated={isAuthenticated}
                 isVerifying={isVerifying}
               />
