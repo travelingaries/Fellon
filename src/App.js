@@ -17,8 +17,6 @@ import { connect } from "react-redux";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 class App extends Component {
-  componentDidMount() {}
-
   render() {
     const { isAuthenticated, isVerifying } = this.props;
     console.log("logging state: ", isAuthenticated);

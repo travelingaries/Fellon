@@ -79,7 +79,6 @@ class SignUpBody1 extends Component {
         window.confirmationResult = confirmationResult;
       })
       .then(() => {
-        console.log("got here");
         // Check if user exists in database
         firestore
           .collection("users")
