@@ -32,11 +32,27 @@ class Notification extends Component {
       image: null,
       url: "",
       progress: 0,
+      currentUserDoc: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
   }
-
+  componentDidMount() {
+    this.setState(
+      {
+        currentUserDoc: firestore
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid),
+      },
+      () => {
+        this.state.currentUserDoc.get().then((doc) => {
+          if (doc && doc.data().profileImageUrl) {
+            this.setState({ url: doc.data().profileImageUrl });
+          }
+        });
+      }
+    );
+  }
   handleChange(e) {
     if (e.target.files[0]) {
       const image = e.target.files[0];
@@ -61,11 +77,12 @@ class Notification extends Component {
       },
       (error) => {
         // Error function
-        console.log(("Error while uploading image to Firebase storage": error));
+        console.log(("Error while uploading image to Firebase storage", error));
       },
       () => {
         // Complete function
         console.log("image upload completed");
+        this.setState({ progress: 0 });
         storageRef.getDownloadURL().then((url) => {
           this.setState({ url }, () => {
             console.log("image url in storage: ", url);
@@ -75,24 +92,35 @@ class Notification extends Component {
             // Delete previous profile image from storage if it exists
             currentUserDoc.get().then((doc) => {
               if (doc.data().profileImageUrlName) {
-                const deleteTask = storage
-                  .ref("profileImages")
-                  .child(doc.data().profileImageUrlName)
-                  .delete()
-                  .then(() => {
-                    console.log(
-                      "previous profile picture deleted from storage"
-                    );
+                try {
+                  const deleteTask = storage
+                    .ref("profileImages")
+                    .child(doc.data().profileImageUrlName);
+                  deleteTask.delete().then(() => {
+                    // Add new profile image data to firestore
+                    const userData = {
+                      profileImageUrl: this.state.url,
+                      profileImageUrlName: this.state.image.name,
+                    };
+                    currentUserDoc.update(userData).then(() => {
+                      console.log(`user's profile pic was updated`);
+                    });
                   });
+                } catch (error) {
+                  console.log(
+                    "error while deleting previous profile image: ",
+                    error
+                  );
+                  // Add new profile image data to firestore
+                  const userData = {
+                    profileImageUrl: this.state.url,
+                    profileImageUrlName: this.state.image.name,
+                  };
+                  currentUserDoc.update(userData).then(() => {
+                    console.log(`user's profile pic was updated`);
+                  });
+                }
               }
-            });
-            // Add new profile image data to firestore
-            const userData = {
-              profileImageUrl: this.state.url,
-              profileImageUrlName: this.state.image.name,
-            };
-            currentUserDoc.update(userData).then(() => {
-              console.log(`user's profile pic was updated`);
             });
           });
         });
