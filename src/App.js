@@ -63,6 +63,13 @@ class App extends Component {
               />
               <ProtectedRoute
                 exact
+                path="/upload"
+                component={Upload}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
+              <ProtectedRoute
+                exact
                 path="/editProfile"
                 component={EditProfile}
                 isAuthenticated={isAuthenticated}

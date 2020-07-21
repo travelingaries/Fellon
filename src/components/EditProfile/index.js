@@ -20,8 +20,10 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .matches(nameRegex, "닉네임은 한글, 영문 소문자, 또는 숫자만 가능합니다.")
-    .required()
+    .required("닉네임을 입력해주세요")
     .max(16, "닉네임은 16자까지만 가능합니다"),
+  age: yup.number().min(18).max(100).required(),
+  gender: yup.number().min(1).max(2).required(),
 });
 
 class Notification extends Component {
@@ -77,7 +79,9 @@ class Notification extends Component {
       },
       (error) => {
         // Error function
-        console.log(("Error while uploading image to Firebase storage", error));
+        console.error(
+          ("Error while uploading image to Firebase storage: ", error)
+        );
       },
       () => {
         // Complete function
@@ -127,6 +131,19 @@ class Notification extends Component {
       }
     );
   }
+  submitUserData(data) {
+    const { username, age } = data;
+    const gender = parseInt(data.gender);
+    const userData = {
+      username,
+      age,
+      gender,
+    };
+    this.state.currentUserDoc.update(userData).then(() => {
+      console.log("user's profile data was updated");
+      window.location.href = "/profile";
+    });
+  }
 
   render() {
     return (
@@ -147,7 +164,7 @@ class Notification extends Component {
             }}
           >
             <div
-              style={{ width: "200px", height: "200px", alignSelf: "center" }}
+              style={{ width: "120px", height: "120px", alignSelf: "center" }}
             >
               <img
                 src={this.state.url || uploadProfilePicImg}
@@ -155,13 +172,12 @@ class Notification extends Component {
                 style={{
                   borderRadius: "50%",
                   justifySelf: "center",
-                  height: "200px",
-                  width: "200px",
+                  height: "120px",
+                  width: "120px",
                 }}
               />
             </div>
           </div>
-          <br />
           <div>
             <progress
               value={this.state.progress}
@@ -175,25 +191,26 @@ class Notification extends Component {
               }}
             />
           </div>
-          <br />
           <div>
             <input
               type="file"
               id="uploadProfileImageInput"
               onChange={this.handleChange}
               style={{ display: "block", visibility: "hidden" }}
+              accept="image/*"
             ></input>
           </div>
           <Formik
             initialValues={{
-              consent1: false,
-              consent2: false,
-              geoConsent: false,
+              username: "",
+              age: 0,
+              gender: 0,
             }}
             validationSchema={validationSchema}
             onSubmit={(data, { setSubmitting }) => {
               setSubmitting(true);
               console.log("submit: ", data);
+              this.submitUserData(data);
               setSubmitting(false);
             }}
           >
@@ -206,8 +223,26 @@ class Notification extends Component {
                   required
                   placeholder="닉네임 (한글, 영문 소문자, 숫자)"
                   className="usernameTextField"
-                ></Field>
-
+                />
+                <h4>성별</h4>
+                <Field name="gender" type="radio" value="1" as={Radio} />{" "}
+                <label>남</label>
+                <Field
+                  name="gender"
+                  type="radio"
+                  value="2"
+                  as={Radio}
+                  style={{ marginLeft: "25%" }}
+                />{" "}
+                <label>여</label>
+                <h4>나이</h4>
+                <Field
+                  type="number"
+                  name="age"
+                  as={TextField}
+                  style={{ width: "100%" }}
+                  placeholder="예: 20"
+                />
                 <div className="nextSignUpButton">
                   <Button
                     disabled={isSubmitting}
@@ -216,12 +251,21 @@ class Notification extends Component {
                     style={{
                       backgroundColor:
                         Object.keys(errors).length === 0 &&
-                        values.consent1 &&
-                        values.consent2
+                        values.username &&
+                        values.age &&
+                        values.gender
                           ? "#f50057"
                           : "rgb(221,221,221)",
                     }}
-                    onClick={() => this.props.handleChangeSignUpStage(1, true)}
+                    onClick={() => {
+                      if (Object.keys(errors).length > 0) {
+                        window.alert(
+                          `다음 항목에 문제가 있습니다: ${
+                            Object.keys(errors)[0]
+                          }`
+                        );
+                      }
+                    }}
                   >
                     →
                   </Button>
@@ -230,7 +274,6 @@ class Notification extends Component {
             )}
           </Formik>
         </div>
-        <TabBar currentTab={this.state.currentTab} />
       </div>
     );
   }

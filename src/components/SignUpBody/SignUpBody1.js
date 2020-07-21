@@ -26,8 +26,12 @@ class SignUpBody1 extends Component {
       signInSuccessUrl: "/",
       signInFlow: "redirect",
       signInOptions: [
-        //Leave the lines as is for the providers you want to offer your users
-        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        {
+          //Leave the lines as is for the providers you want to offer your users
+          provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+          // Change default country code
+          defaultCountry: "KR",
+        },
       ],
       // tosUrl and privacyPolicyUrl accept either url string or a callback function
       // Terms of service url/callback
