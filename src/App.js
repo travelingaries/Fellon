@@ -10,6 +10,7 @@ import Start from "./components/start";
 import SignUp from "./components/SignUp";
 import Login from "./components/login";
 import EditProfile from "./components/EditProfile";
+import MiddlePage from "./components/MiddlePage";
 
 import firebase from "./config/config.js";
 
@@ -77,6 +78,13 @@ class App extends Component {
               />
               <Route path="/signup" component={SignUp} />
               <Route path="/login" component={Login} />
+              <ProtectedRoute
+                exact
+                path="/loadingUser"
+                component={MiddlePage}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
             </Switch>
           </div>
         </div>

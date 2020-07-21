@@ -4,7 +4,7 @@
   width: 100vw;
   height: 99vh;
   background-repeat: no-repeat;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .startContainer {

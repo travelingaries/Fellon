@@ -22,7 +22,7 @@ class Login extends Component {
 
   componentDidMount() {
     var uiConfig = {
-      signInSuccessUrl: "/",
+      signInSuccessUrl: "/loadingUser",
       signInFlow: "redirect",
       signInOptions: [
         {

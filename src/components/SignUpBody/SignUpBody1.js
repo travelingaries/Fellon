@@ -23,7 +23,7 @@ class SignUpBody1 extends Component {
 
   componentDidMount() {
     var uiConfig = {
-      signInSuccessUrl: "/",
+      signInSuccessUrl: "/loadingUser",
       signInFlow: "redirect",
       signInOptions: [
         {

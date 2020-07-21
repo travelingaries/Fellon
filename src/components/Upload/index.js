@@ -31,8 +31,14 @@ const validationSchema = yup.object({
     .required("제목을 입력해주세요")
     .min(2)
     .max(12, "제목은 12자까지만 가능합니다."),
-  gender: yup.number().min(1).max(3).required(),
-  theme: yup.string().min(1).max(6).required(),
+  gender: yup
+    .string()
+    .matches(/^[1-3]$/)
+    .required(),
+  theme: yup
+    .string()
+    .matches(/^[1-6]$/)
+    .required(),
 });
 
 class Upload extends Component {
@@ -45,6 +51,9 @@ class Upload extends Component {
       progress: 0,
       currentUserDoc: null,
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleVideoUpload = this.handleVideoUpload.bind(this);
+    this.submitPostData = this.submitPostData.bind(this);
   }
   componentDidMount() {
     this.setState({
@@ -93,7 +102,29 @@ class Upload extends Component {
     );
   }
   submitPostData(data) {
-    this.addPostDataToUserData();
+    const video = {
+      name: "asdf",
+    };
+    this.setState({ video });
+    const { title, participantsNum } = data;
+    const gender = parseInt(data.gender);
+    const theme = parseInt(data.theme);
+    const postData = {
+      title,
+      gender,
+      theme,
+      participantsNum,
+    };
+    console.log("post data: ", postData);
+    console.log(this.state.video);
+
+    return firestore
+      .collection("posts")
+      .doc(this.state.video.name + new Date().toString)
+      .set(postData)
+      .then(() => {
+        console.log("post data saved");
+      });
   }
   addPostDataToUserData() {}
 
@@ -140,19 +171,20 @@ class Upload extends Component {
             initialValues={{
               title: "",
               gender: "0",
-              participatesNum: 2,
-              theme: "",
+              participantsNum: 2,
+              theme: "0",
             }}
             validationSchema={validationSchema}
             onSubmit={(data, { setSubmitting }) => {
               setSubmitting(true);
               console.log("submit: ", data);
-              //this.submitPostData(data);
+              this.submitPostData(data);
               setSubmitting(false);
             }}
           >
             {({ values, errors, isSubmitting }) => (
               <Form>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
                 <div className="elementDiv">
                   <div>
                     <h4>제목</h4>
@@ -160,114 +192,104 @@ class Upload extends Component {
                       type="text"
                       name="title"
                       as={TextField}
+                      value={values.title}
                       required
                       placeholder="최대 12글자 (예: 치맥 벙개)"
                       className="textField"
                     />
                   </div>
                 </div>
-                <Field
-                  name="gender"
-                  type="radio"
-                  value="1"
-                  as={Radio}
-                  id="selectGenderMale"
-                  className="hiddenField"
-                />
-                <label className="hiddenField">남성</label>
-                <Field
-                  name="gender"
-                  type="radio"
-                  value="2"
-                  as={Radio}
-                  id="selectGenderFemale"
-                  className="hiddenField"
-                />
-                <label className="hiddenField">여성</label>
-                <Field
-                  name="gender"
-                  type="radio"
-                  value="3"
-                  as={Radio}
-                  id="selectGenderBoth"
-                  className="hiddenField"
-                />
-                <label className="hiddenField">남녀혼성</label>
-                <Field
-                  type="number"
-                  name="participantsNum"
-                  as={TextField}
-                  required
-                  className="textField hiddenField"
-                  value={values.participatesNum}
-                  id="participantsNum"
-                />
-                <div className="elementDiv" style={{ marginTop: "-60px" }}>
-                  <div>
-                    <h4>테마</h4>
-                    <div className="themeRow">
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "맛집";
-                        }}
-                      >
-                        <img src={theme1Img} />
-                      </div>
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "벙개";
-                        }}
-                      >
-                        <img src={theme2Img} />
-                      </div>
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "음악";
-                        }}
-                      >
-                        <img src={theme3Img} />
-                      </div>
-                    </div>
-                    <div className="themeRow">
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "여행";
-                        }}
-                      >
-                        <img src={theme4Img} />
-                      </div>
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "소모임";
-                        }}
-                      >
-                        <img src={theme5Img} />
-                      </div>
-                      <div
-                        className="themeImgDiv"
-                        onClick={() => {
-                          document.getElementById("theme").value = "운동";
-                        }}
-                      >
-                        <img src={theme6Img} />
-                      </div>
-                    </div>
-                  </div>
+                <div className="hiddenDiv">
+                  <Field
+                    name="gender"
+                    type="radio"
+                    value="1"
+                    as={Radio}
+                    id="selectGenderMale"
+                    className="hiddenField"
+                  />
+                  <label className="hiddenField">남성</label>
+                  <Field
+                    name="gender"
+                    type="radio"
+                    value="2"
+                    as={Radio}
+                    id="selectGenderFemale"
+                    className="hiddenField"
+                  />
+                  <label className="hiddenField">여성</label>
+                  <Field
+                    name="gender"
+                    type="radio"
+                    value="3"
+                    as={Radio}
+                    id="selectGenderBoth"
+                    className="hiddenField"
+                  />
+                  <label className="hiddenField">남녀혼성</label>
                 </div>
-                <Field
-                  type="text"
-                  name="theme"
-                  as={TextField}
-                  required
-                  className="textField"
-                  id="theme"
-                  placeholder="테마 직접 입력 (최대 12글자)"
-                />
+                <div className="hiddenDiv">
+                  <Field
+                    type="number"
+                    name="participantsNum"
+                    as={TextField}
+                    required
+                    className="textField hiddenField"
+                    value={values.participantsNum}
+                    id="participantsNum"
+                  />
+                </div>
+                <div className="hiddenDiv">
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="1"
+                    as={Radio}
+                    id="selectTheme1"
+                    className="hiddenField"
+                  />
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="2"
+                    as={Radio}
+                    id="selectTheme2"
+                    className="hiddenField"
+                  />
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="3"
+                    as={Radio}
+                    id="selectTheme3"
+                    className="hiddenField"
+                  />
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="4"
+                    as={Radio}
+                    id="selectTheme4"
+                    className="hiddenField"
+                  />
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="5"
+                    as={Radio}
+                    id="selectTheme5"
+                    className="hiddenField"
+                  />
+                  <Field
+                    name="theme"
+                    type="radio"
+                    value="6"
+                    as={Radio}
+                    id="selectTheme6"
+                    className="hiddenField"
+                  />
+                </div>
+
                 <div className="nextSignUpButton">
                   <Button
                     disabled={isSubmitting}
@@ -306,6 +328,7 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
+                      console.log("run male");
                       var selectGenderMale = document.getElementById(
                         "selectGenderMale"
                       );
@@ -351,6 +374,7 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
+                      console.log("run female");
                       var selectGenderFemale = document.getElementById(
                         "selectGenderFemale"
                       );
@@ -396,6 +420,7 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
+                      console.log("run both");
                       var selectGenderBoth = document.getElementById(
                         "selectGenderBoth"
                       );
@@ -511,6 +536,63 @@ class Upload extends Component {
                   <button>
                     <img id="plusParticipantsNum" src={plusImgOn} />
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="elementDiv" id="selectTheme">
+            <div>
+              <h4>테마</h4>
+              <div className="themeRow">
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme1").click();
+                  }}
+                >
+                  <img src={theme1Img} />
+                </div>
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme2").click();
+                  }}
+                >
+                  <img src={theme2Img} />
+                </div>
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme3").click();
+                  }}
+                >
+                  <img src={theme3Img} />
+                </div>
+              </div>
+              <div className="themeRow">
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme4").click();
+                  }}
+                >
+                  <img src={theme4Img} />
+                </div>
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme5").click();
+                  }}
+                >
+                  <img src={theme5Img} />
+                </div>
+                <div
+                  className="themeImgDiv"
+                  onClick={() => {
+                    document.getElementById("selectTheme6").click();
+                  }}
+                >
+                  <img src={theme6Img} />
                 </div>
               </div>
             </div>

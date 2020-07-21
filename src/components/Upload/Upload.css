@@ -107,8 +107,20 @@ h6 {
   margin-top: 16px;
 }
 
+.hiddenDiv {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 #selectNumAndGender {
-  margin-top: -130px;
+  margin-top: -140px;
+  z-index: 2;
+}
+
+#selectTheme {
+  margin-top: 0px;
+  z-index: 2;
 }
 
 @media only screen and (max-height: 600px) {

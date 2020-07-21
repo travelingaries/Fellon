@@ -32,6 +32,7 @@ class Notification extends Component {
     this.state = {
       currentTab: 6,
       image: null,
+      imageName: "",
       url: "",
       progress: 0,
       currentUserDoc: null,
@@ -58,15 +59,25 @@ class Notification extends Component {
   handleChange(e) {
     if (e.target.files[0]) {
       const image = e.target.files[0];
-      this.setState({ image }, () => {
-        this.handleImageUpload();
-      });
+      this.setState(
+        {
+          image,
+          imageName:
+            firebase.auth().currentUser.uid +
+            new Date().toISOString() +
+            image.name,
+        },
+        () => {
+          this.handleImageUpload();
+        }
+      );
     }
   }
   handleImageUpload() {
-    const { image } = this.state;
+    const { image, imageName } = this.state;
     console.log("image: ", image);
-    const storageRef = storage.ref(`profileImages/${image.name}`);
+
+    const storageRef = storage.ref(`profileImages/${imageName}`);
     const uploadTask = storageRef.put(image);
     uploadTask.on(
       "state_changed",
@@ -104,7 +115,7 @@ class Notification extends Component {
                     // Add new profile image data to firestore
                     const userData = {
                       profileImageUrl: this.state.url,
-                      profileImageUrlName: this.state.image.name,
+                      profileImageUrlName: this.state.imageName,
                     };
                     currentUserDoc.update(userData).then(() => {
                       console.log(`user's profile pic was updated`);
@@ -118,12 +129,21 @@ class Notification extends Component {
                   // Add new profile image data to firestore
                   const userData = {
                     profileImageUrl: this.state.url,
-                    profileImageUrlName: this.state.image.name,
+                    profileImageUrlName: this.state.imageName,
                   };
                   currentUserDoc.update(userData).then(() => {
                     console.log(`user's profile pic was updated`);
                   });
                 }
+              } else {
+                // Add new profile image data to firestore
+                const userData = {
+                  profileImageUrl: this.state.url,
+                  profileImageUrlName: this.state.imageName,
+                };
+                currentUserDoc.update(userData).then(() => {
+                  console.log(`user's profile pic was updated`);
+                });
               }
             });
           });
