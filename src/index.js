@@ -3,16 +3,14 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
 import { BrowserRouter, Switch } from "react-router-dom";
-import firebase from "./config/config";
 
 import configureStore from "./store/configureStore";
 
 import { Provider, useSelector } from "react-redux";
-import {
-  reactReduxFirebase,
-  getFirebase,
-  isLoaded,
-} from "react-redux-firebase";
+import { ReactReduxFirebaseProvider, isLoaded } from "react-redux-firebase";
+import { createFirestoreInstance } from "redux-firestore";
+
+import firebase from "./config/config";
 
 import * as serviceWorker from "./serviceWorker";
 
@@ -66,12 +64,21 @@ function AuthIsLoaded({ children }) {
   if (!isLoaded(auth)) return <div>Loading...</div>;
   return children;
 }
+
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance,
+};
 const renderApp = () =>
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ReactReduxFirebaseProvider {...rrfProps}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ReactReduxFirebaseProvider>
     </Provider>,
     document.getElementById("root")
   );

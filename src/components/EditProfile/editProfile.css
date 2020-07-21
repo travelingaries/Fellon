@@ -1,5 +1,10 @@
+.regular-index {
+  overflow: hidden;
+  height: 95%;
+}
+
 .container {
-  padding-top: 80px;
+  padding-top: 35px;
 }
 
 .usernameTextField {

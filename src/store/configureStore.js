@@ -6,8 +6,9 @@ import loggerMiddleware from "../middleware/logger";
 import rootReducers from "../reducers";
 
 import firebase from "../config/config.js";
-import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
+import { getFirebase } from "react-redux-firebase";
 import { reduxFirestore, getFirestore } from "redux-firestore";
+import reduxThunk from "redux-thunk";
 
 import { verifyAuth } from "../actions";
 
@@ -15,11 +16,14 @@ export default function configureStore(preloadedState) {
   const middlewares = [loggerMiddleware, thunkMiddleware];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
-  const enhancers = [middlewareEnhancer, monitorReducersEnhancer];
-
-  const rrfConfig = {
-    attachAuthIsReady: true,
-  };
+  const enhancers = [
+    middlewareEnhancer,
+    monitorReducersEnhancer,
+    reduxFirestore(firebase),
+    applyMiddleware(
+      reduxThunk.withExtraArgument({ getFirebase, getFirestore })
+    ),
+  ];
 
   const composedEnhancers = composeWithDevTools(...enhancers);
 

@@ -9,8 +9,6 @@ import "./editProfile.css";
 import uploadProfilePicImg from "../../images/uploadProfileImage.jpg";
 import xImg from "../../images/icoX.png";
 
-import TabBar from "../TabBar";
-
 import firebase from "../../config/config.js";
 const firestore = firebase.firestore();
 const storage = firebase.storage();
@@ -167,132 +165,174 @@ class Notification extends Component {
 
   render() {
     return (
-      <div className="regular-index">
-        <div className="container">
+      <div>
+        <nav
+          className="navBar"
+          id="editProfileNavBar"
+          style={{
+            position: "relative",
+            display: "flex",
+            visibility: firestore
+              .collection("users")
+              .doc(firebase.auth().currentUser.uid)
+              .get()
+              .then((doc) => {
+                if (!doc.data().username) return true;
+                else return false;
+              })
+              ? "hidden"
+              : "visible",
+          }}
+        >
+          <div>
+            <img
+              style={{
+                width: "20px",
+                marginTop: "10px",
+                marginLeft: "18px",
+              }}
+              src={xImg}
+            />
+          </div>
           <div
-            className="setProfilePictureDiv"
             style={{
-              display: "flex",
-              alignItems: "center",
+              textAlign: "center",
               justifyContent: "center",
-            }}
-            onClick={() => {
-              var uploadProfileImageInput = document.getElementById(
-                "uploadProfileImageInput"
-              );
-              uploadProfileImageInput.click();
+              alignItems: "center",
+              marginRight: "38px",
+              width: "100%",
             }}
           >
+            <h4 className="navCenterText">프로필 수정</h4>
+          </div>
+        </nav>
+        <div className="regular-index">
+          <div className="container">
             <div
-              style={{ width: "120px", height: "120px", alignSelf: "center" }}
+              className="setProfilePictureDiv"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onClick={() => {
+                var uploadProfileImageInput = document.getElementById(
+                  "uploadProfileImageInput"
+                );
+                uploadProfileImageInput.click();
+              }}
             >
-              <img
-                src={this.state.url || uploadProfilePicImg}
-                alt="uploaded image"
+              <div
+                style={{ width: "120px", height: "120px", alignSelf: "center" }}
+              >
+                <img
+                  src={this.state.url || uploadProfilePicImg}
+                  alt="uploaded image"
+                  style={{
+                    borderRadius: "50%",
+                    justifySelf: "center",
+                    height: "120px",
+                    width: "120px",
+                  }}
+                />
+              </div>
+            </div>
+            <div>
+              <progress
+                value={this.state.progress}
+                max="100"
                 style={{
-                  borderRadius: "50%",
-                  justifySelf: "center",
-                  height: "120px",
-                  width: "120px",
+                  width: "100%",
+                  visibility:
+                    this.state.progress === 0 || this.state.progress === 100
+                      ? "hidden"
+                      : "visible",
                 }}
               />
             </div>
-          </div>
-          <div>
-            <progress
-              value={this.state.progress}
-              max="100"
-              style={{
-                width: "100%",
-                visibility:
-                  this.state.progress === 0 || this.state.progress === 100
-                    ? "hidden"
-                    : "visible",
+            <div>
+              <input
+                type="file"
+                id="uploadProfileImageInput"
+                onChange={this.handleChange}
+                style={{ display: "block", visibility: "hidden" }}
+                accept="image/*"
+              ></input>
+            </div>
+            <Formik
+              initialValues={{
+                username: "",
+                age: 0,
+                gender: 0,
               }}
-            />
+              validationSchema={validationSchema}
+              onSubmit={(data, { setSubmitting }) => {
+                setSubmitting(true);
+                console.log("submit: ", data);
+                this.submitUserData(data);
+                setSubmitting(false);
+              }}
+            >
+              {({ values, errors, isSubmitting }) => (
+                <Form>
+                  <Field
+                    type="text"
+                    name="username"
+                    as={TextField}
+                    required
+                    placeholder="닉네임 (한글, 영문 소문자, 숫자)"
+                    className="usernameTextField"
+                  />
+                  <h4>성별</h4>
+                  <Field name="gender" type="radio" value="1" as={Radio} />{" "}
+                  <label>남</label>
+                  <Field
+                    name="gender"
+                    type="radio"
+                    value="2"
+                    as={Radio}
+                    style={{ marginLeft: "25%" }}
+                  />{" "}
+                  <label>여</label>
+                  <h4>나이</h4>
+                  <Field
+                    type="number"
+                    name="age"
+                    as={TextField}
+                    style={{ width: "100%" }}
+                    placeholder="예: 20"
+                  />
+                  <div className="nextSignUpButton">
+                    <Button
+                      disabled={isSubmitting}
+                      type="submit"
+                      className="consentSubmitButton"
+                      style={{
+                        backgroundColor:
+                          Object.keys(errors).length === 0 &&
+                          values.username &&
+                          values.age &&
+                          values.gender
+                            ? "#f50057"
+                            : "rgb(221,221,221)",
+                      }}
+                      onClick={() => {
+                        if (Object.keys(errors).length > 0) {
+                          window.alert(
+                            `다음 항목에 문제가 있습니다: ${
+                              Object.keys(errors)[0]
+                            }`
+                          );
+                        }
+                      }}
+                    >
+                      →
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
-          <div>
-            <input
-              type="file"
-              id="uploadProfileImageInput"
-              onChange={this.handleChange}
-              style={{ display: "block", visibility: "hidden" }}
-              accept="image/*"
-            ></input>
-          </div>
-          <Formik
-            initialValues={{
-              username: "",
-              age: 0,
-              gender: 0,
-            }}
-            validationSchema={validationSchema}
-            onSubmit={(data, { setSubmitting }) => {
-              setSubmitting(true);
-              console.log("submit: ", data);
-              this.submitUserData(data);
-              setSubmitting(false);
-            }}
-          >
-            {({ values, errors, isSubmitting }) => (
-              <Form>
-                <Field
-                  type="text"
-                  name="username"
-                  as={TextField}
-                  required
-                  placeholder="닉네임 (한글, 영문 소문자, 숫자)"
-                  className="usernameTextField"
-                />
-                <h4>성별</h4>
-                <Field name="gender" type="radio" value="1" as={Radio} />{" "}
-                <label>남</label>
-                <Field
-                  name="gender"
-                  type="radio"
-                  value="2"
-                  as={Radio}
-                  style={{ marginLeft: "25%" }}
-                />{" "}
-                <label>여</label>
-                <h4>나이</h4>
-                <Field
-                  type="number"
-                  name="age"
-                  as={TextField}
-                  style={{ width: "100%" }}
-                  placeholder="예: 20"
-                />
-                <div className="nextSignUpButton">
-                  <Button
-                    disabled={isSubmitting}
-                    type="submit"
-                    className="consentSubmitButton"
-                    style={{
-                      backgroundColor:
-                        Object.keys(errors).length === 0 &&
-                        values.username &&
-                        values.age &&
-                        values.gender
-                          ? "#f50057"
-                          : "rgb(221,221,221)",
-                    }}
-                    onClick={() => {
-                      if (Object.keys(errors).length > 0) {
-                        window.alert(
-                          `다음 항목에 문제가 있습니다: ${
-                            Object.keys(errors)[0]
-                          }`
-                        );
-                      }
-                    }}
-                  >
-                    →
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
         </div>
       </div>
     );
