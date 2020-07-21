@@ -20,14 +20,14 @@ class SignUpBody extends Component {
     this.setState({ currentSignUp: moveTo, geoConsent: true });
   }
   render() {
-    if (this.state.currentSignUp == 0) {
+    if (this.state.currentSignUp === 0) {
       return (
         <SignUpBody0
           currentSignUp={this.state.currentSignUp}
           handleChangeSignUpStage={this.handleChangeSignUpStage}
         />
       );
-    } else if (this.state.currentSignUp == 1) {
+    } else if (this.state.currentSignUp === 1) {
       return <SignUpBody1 currentSignUp={this.state.currentSignUp} />;
     }
   }

@@ -16,6 +16,8 @@ import { loginUser } from "../../actions";
 
 firebase.auth().useDeviceLanguage();
 
+const firestore = firebase.firestore();
+
 class SignUpBody1 extends Component {
   state = { phoneNumber: "" };
 
@@ -24,8 +26,12 @@ class SignUpBody1 extends Component {
       signInSuccessUrl: "/",
       signInFlow: "redirect",
       signInOptions: [
-        //Leave the lines as is for the providers you want to offer your users
-        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        {
+          //Leave the lines as is for the providers you want to offer your users
+          provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+          // Change default country code
+          defaultCountry: "KR",
+        },
       ],
       // tosUrl and privacyPolicyUrl accept either url string or a callback function
       // Terms of service url/callback
@@ -77,7 +83,32 @@ class SignUpBody1 extends Component {
         window.confirmationResult = confirmationResult;
       })
       .then(() => {
-        dispatch(loginUser(phoneNumber, appVerifier));
+        // Check if user exists in database
+        firestore
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .get()
+          .then((doc) => {
+            if (!doc.exists) {
+              // Create new user document
+              const userData = {
+                phoneNumber,
+              };
+              return firestore
+                .collection("users")
+                .doc(firebase.auth().currentUser.uid)
+                .set(userData)
+                .then(() => {
+                  console.log(
+                    `new user ${firebase.auth().currentUser.uid} was created`
+                  );
+                  dispatch(loginUser(phoneNumber, appVerifier));
+                });
+            } else {
+              console.log("User already exists in database");
+              dispatch(loginUser(phoneNumber, appVerifier));
+            }
+          });
       })
       .catch(function (error) {
         // Error; SMS not sent

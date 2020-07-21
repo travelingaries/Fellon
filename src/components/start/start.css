@@ -4,6 +4,7 @@
   width: 100vw;
   height: 99vh;
   background-repeat: no-repeat;
+  overflow-y: hidden;
 }
 
 .startContainer {
@@ -53,4 +54,10 @@ h3.introHeading {
   margin-top: 3vh;
   padding-bottom: 16px;
   border-radius: 5px;
+}
+
+@media only screen and (max-height: 600px) {
+  .startOptionButtonDiv {
+    margin-top: 13vh;
+  }
 }
