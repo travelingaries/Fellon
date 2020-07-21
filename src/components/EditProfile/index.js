@@ -10,6 +10,7 @@ import uploadProfilePicImg from "../../images/uploadProfileImage.jpg";
 import xImg from "../../images/icoX.png";
 
 import firebase from "../../config/config.js";
+
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
@@ -24,7 +25,7 @@ const validationSchema = yup.object({
   gender: yup.number().min(1).max(2).required(),
 });
 
-class Notification extends Component {
+class EditProfile extends Component {
   constructor() {
     super();
     this.state = {
@@ -34,11 +35,14 @@ class Notification extends Component {
       url: "",
       progress: 0,
       currentUserDoc: null,
+      username: "",
+      gender: 0,
+      age: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
   }
-  componentDidMount() {
+  componentWillMount() {
     this.setState(
       {
         currentUserDoc: firestore
@@ -50,6 +54,16 @@ class Notification extends Component {
           if (doc && doc.data().profileImageUrl) {
             this.setState({ url: doc.data().profileImageUrl });
           }
+          if (doc && doc.data().username) {
+            this.setState({ username: doc.data().username });
+          }
+          if (doc && doc.data().gender) {
+            this.setState({ gender: doc.data().gender });
+          }
+          if (doc && doc.data().age) {
+            this.setState({ age: doc.data().age });
+          }
+          console.log("got here: ", this.state);
         });
       }
     );
@@ -261,9 +275,9 @@ class Notification extends Component {
             </div>
             <Formik
               initialValues={{
-                username: "",
-                age: 0,
-                gender: 0,
+                username: this.state.username,
+                age: this.state.age,
+                gender: this.state.gender,
               }}
               validationSchema={validationSchema}
               onSubmit={(data, { setSubmitting }) => {
@@ -282,6 +296,7 @@ class Notification extends Component {
                     required
                     placeholder="닉네임 (한글, 영문 소문자, 숫자)"
                     className="usernameTextField"
+                    value={values.username}
                   />
                   <h4>성별</h4>
                   <Field name="gender" type="radio" value="1" as={Radio} />{" "}
@@ -339,4 +354,4 @@ class Notification extends Component {
   }
 }
 
-export default Notification;
+export default EditProfile;
