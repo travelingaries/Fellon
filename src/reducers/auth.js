@@ -7,6 +7,8 @@ import {
   LOGOUT_FAILURE,
   VERIFY_REQUEST,
   VERIFY_SUCCESS,
+  UPDATE_CURRENT_USER,
+  OVERWRITE_CURRENT_USER,
 } from "../actions/actionTypes";
 
 export default (
@@ -57,6 +59,10 @@ export default (
       return { ...state, isVerifying: true, verifyingError: false };
     case VERIFY_SUCCESS:
       return { ...state, isVerifying: false };
+    case UPDATE_CURRENT_USER:
+      return { ...state, user: action.user };
+    case OVERWRITE_CURRENT_USER:
+      return { ...state, user: action.user };
     default:
       return state;
   }

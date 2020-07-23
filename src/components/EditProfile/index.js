@@ -10,6 +10,7 @@ import uploadProfilePicImg from "../../images/uploadProfileImage.jpg";
 import xImg from "../../images/icoX.png";
 
 import firebase from "../../config/config.js";
+
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
@@ -20,11 +21,11 @@ const validationSchema = yup.object({
     .matches(nameRegex, "닉네임은 한글, 영문 소문자, 또는 숫자만 가능합니다.")
     .required("닉네임을 입력해주세요")
     .max(16, "닉네임은 16자까지만 가능합니다"),
-  age: yup.number().min(18).max(100).required(),
+  age: yup.number().min(1).max(2).required(),
   gender: yup.number().min(1).max(2).required(),
 });
 
-class Notification extends Component {
+class EditProfile extends Component {
   constructor() {
     super();
     this.state = {
@@ -34,25 +35,38 @@ class Notification extends Component {
       url: "",
       progress: 0,
       currentUserDoc: null,
+      username: "await",
+      gender: 0,
+      age: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleImageUpload = this.handleImageUpload.bind(this);
   }
+  componentWillMount() {
+    this.setState({
+      currentUserDoc: firestore
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid),
+    });
+  }
   componentDidMount() {
-    this.setState(
-      {
-        currentUserDoc: firestore
-          .collection("users")
-          .doc(firebase.auth().currentUser.uid),
-      },
-      () => {
-        this.state.currentUserDoc.get().then((doc) => {
-          if (doc && doc.data().profileImageUrl) {
-            this.setState({ url: doc.data().profileImageUrl });
-          }
-        });
+    this.state.currentUserDoc.get().then((doc) => {
+      if (doc && doc.data().username) {
+        this.setState({ username: doc.data().username }, () => {});
       }
-    );
+    });
+    this.state.currentUserDoc.get().then((doc) => {
+      if (doc && doc.data().profileImageUrl) {
+        this.setState({ url: doc.data().profileImageUrl });
+      }
+
+      if (doc && doc.data().gender) {
+        this.setState({ gender: doc.data().gender });
+      }
+      if (doc && doc.data().age) {
+        this.setState({ age: doc.data().age });
+      }
+    });
   }
   handleChange(e) {
     if (e.target.files[0]) {
@@ -150,7 +164,8 @@ class Notification extends Component {
     );
   }
   submitUserData(data) {
-    const { username, age } = data;
+    const { username } = data;
+    const age = parseInt(data.gender);
     const gender = parseInt(data.gender);
     const userData = {
       username,
@@ -172,28 +187,21 @@ class Notification extends Component {
           style={{
             position: "relative",
             display: "flex",
-            visibility: firestore
-              .collection("users")
-              .doc(firebase.auth().currentUser.uid)
-              .get()
-              .then((doc) => {
-                if (!doc.data().username) return true;
-                else return false;
-              })
-              ? "hidden"
-              : "visible",
+            visibility: this.state.username !== "" ? "visible" : "hidden",
           }}
         >
-          <div>
-            <img
-              style={{
-                width: "20px",
-                marginTop: "10px",
-                marginLeft: "18px",
-              }}
-              src={xImg}
-            />
-          </div>
+          <a href="/profile">
+            <div>
+              <img
+                style={{
+                  width: "20px",
+                  marginTop: "10px",
+                  marginLeft: "18px",
+                }}
+                src={xImg}
+              />
+            </div>
+          </a>
           <div
             style={{
               textAlign: "center",
@@ -260,10 +268,11 @@ class Notification extends Component {
               ></input>
             </div>
             <Formik
+              enableReinitialize
               initialValues={{
-                username: "",
-                age: 0,
-                gender: 0,
+                username: this.state.username,
+                age: `${this.state.age}`,
+                gender: `${this.state.gender}`,
               }}
               validationSchema={validationSchema}
               onSubmit={(data, { setSubmitting }) => {
@@ -282,6 +291,7 @@ class Notification extends Component {
                     required
                     placeholder="닉네임 (한글, 영문 소문자, 숫자)"
                     className="usernameTextField"
+                    value={values.username}
                   />
                   <h4>성별</h4>
                   <Field name="gender" type="radio" value="1" as={Radio} />{" "}
@@ -295,13 +305,16 @@ class Notification extends Component {
                   />{" "}
                   <label>여</label>
                   <h4>나이</h4>
+                  <Field name="age" type="radio" value="1" as={Radio} />{" "}
+                  <label>20대</label>
                   <Field
-                    type="number"
                     name="age"
-                    as={TextField}
-                    style={{ width: "100%" }}
-                    placeholder="예: 20"
-                  />
+                    type="radio"
+                    value="2"
+                    as={Radio}
+                    style={{ marginLeft: "20%" }}
+                  />{" "}
+                  <label>30대</label>
                   <div className="nextSignUpButton">
                     <Button
                       disabled={isSubmitting}
@@ -339,4 +352,4 @@ class Notification extends Component {
   }
 }
 
-export default Notification;
+export default EditProfile;

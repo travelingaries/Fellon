@@ -27,18 +27,7 @@ function initApp() {
     function (user) {
       if (user) {
         // User is signed in
-        var displayName = user.displayName;
-        var uid = user.uid;
-        var phoneNumber = user.phoneNumber;
-        var photoUrl = user.photoUrl;
-        var providerData = user.providerData;
-        user.getIdToken().then(function (accessToken) {
-          //	document.getElementById('sign-in-status').textContent = 'Signed in';
-          //	document.getElementById('sign-in').textContent = 'Sign out';
-          //	document.getElementById('account-details').textContent = JSON.stringify({
-          //		displayName: displayName
-          //	}
-        });
+        user.getIdToken().then(function (accessToken) {});
       } else {
         // User is signed out
         //document.getElementById("sign-in-status").textContent = "Signed out";

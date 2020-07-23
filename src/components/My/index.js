@@ -10,7 +10,7 @@ import firebase from "../../config/config.js";
 
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { logoutUser } from "../../actions";
+import { getCurrentUserInfo, logoutUser } from "../../actions";
 
 class My extends Component {
   constructor() {
@@ -23,7 +23,7 @@ class My extends Component {
     this.handleCloseModal = this.handleCloseModal.bind(this);
   }
   componentWillMount() {
-    //    this.props.getCurrentUserInfo();
+    this.props.getCurrentUserInfo();
   }
   handleOpenModal() {
     this.setState({ showModal: true });
@@ -136,7 +136,8 @@ function mapStateToProps(state) {
   return {
     isLoggingOut: state.auth.isLoggingOut,
     logoutError: state.auth.logoutError,
+    user: state.auth.user,
   };
 }
 
-export default connect(mapStateToProps)(My);
+export default connect(mapStateToProps, { getCurrentUserInfo })(My);

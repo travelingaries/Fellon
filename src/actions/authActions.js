@@ -7,11 +7,16 @@ import {
   LOGOUT_FAILURE,
   VERIFY_REQUEST,
   VERIFY_SUCCESS,
+  UPDATE_CURRENT_USER,
+  OVERWRITE_CURRENT_USER,
 } from "../actions/actionTypes";
+
+import addMediaImg from "../images/uploadProfileImage.jpg";
 
 import firebase from "../config/config.js";
 import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
 import { reduxFirestore, getFirestore } from "redux-firestore";
+const firestore = firebase.firestore();
 
 const requestLogin = () => {
   return {
@@ -98,5 +103,42 @@ export const verifyAuth = () => (dispatch) => {
     });
   } catch (err) {
     console.log(err.message);
+  }
+};
+
+export const getCurrentUserInfo = () => async (dispatch) => {
+  const user = firebase.auth().currentUser;
+
+  try {
+    const docSnapshot = await firestore.collection("users").doc(user.uid).get();
+    if (docSnapshot.exists) {
+      dispatch({
+        type: UPDATE_CURRENT_USER,
+        user: {
+          ...docSnapshot.data(),
+          uid: user.uid,
+          username: docSnapshot.data().username || user.uid,
+          profileImageUrl: docSnapshot.data().profileImageUrl || addMediaImg,
+          phoneNumber: user.phoneNumber || docSnapshot.data().phoneNumber,
+          age: docSnapshot.data().age || 0,
+          gender: docSnapshot.data().gender || 0,
+        },
+      });
+    } else {
+      const newInfo = {
+        uid: user.uid,
+        username: user.uid,
+        phoneNumber: user.phoneNumber,
+        profileImageUrl: addMediaImg,
+        age: 0,
+        gender: 0,
+      };
+      dispatch({
+        type: OVERWRITE_CURRENT_USER,
+        user: newInfo,
+      });
+    }
+  } catch (err) {
+    console.error(err);
   }
 };
