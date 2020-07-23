@@ -22,6 +22,10 @@ import plusImgOn from "../../images/icoPlusOn.png";
 import plusImgOff from "../../images/icoPlusOff.png";
 
 import firebase from "../../config/config.js";
+
+import { connect } from "react-redux";
+import { getCurrentUserInfo } from "../../actions";
+
 const firestore = firebase.firestore();
 const storage = firebase.storage();
 
@@ -49,17 +53,23 @@ class Upload extends Component {
       video: null,
       url: "",
       progress: 0,
+      participantsNum: 2,
       currentUserDoc: null,
+      user: {},
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleVideoUpload = this.handleVideoUpload.bind(this);
     this.submitPostData = this.submitPostData.bind(this);
   }
   componentDidMount() {
-    this.setState({
-      currentUserDoc: firestore
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid),
+    this.props.getCurrentUserInfo().then(() => {
+      this.setState({ user: this.props.user }, () => {
+        this.setState({
+          currentUserDoc: firestore
+            .collection("users")
+            .doc(this.state.user.uid),
+        });
+      });
     });
   }
   handleChange(e) {
@@ -106,14 +116,14 @@ class Upload extends Component {
       name: "asdf",
     };
     this.setState({ video });
-    const { title, participantsNum } = data;
+    const { title } = data;
     const gender = parseInt(data.gender);
     const theme = parseInt(data.theme);
     const postData = {
       title,
       gender,
       theme,
-      participantsNum,
+      participantsNum: this.state.participantsNum,
     };
     console.log("post data: ", postData);
     console.log(this.state.video);
@@ -129,6 +139,7 @@ class Upload extends Component {
   addPostDataToUserData() {}
 
   render() {
+    console.log("rerendered with: ", this.state.participantsNum);
     return (
       <div className="regular-index">
         <NavBar currentTab={this.state.currentTab} />
@@ -168,10 +179,10 @@ class Upload extends Component {
             </div>
           </div>
           <Formik
+            enableReinitialize
             initialValues={{
               title: "",
               gender: "0",
-              participantsNum: 2,
               theme: "0",
             }}
             validationSchema={validationSchema}
@@ -227,17 +238,6 @@ class Upload extends Component {
                     className="hiddenField"
                   />
                   <label className="hiddenField">남녀혼성</label>
-                </div>
-                <div className="hiddenDiv">
-                  <Field
-                    type="number"
-                    name="participantsNum"
-                    as={TextField}
-                    required
-                    className="textField hiddenField"
-                    value={values.participantsNum}
-                    id="participantsNum"
-                  />
                 </div>
                 <div className="hiddenDiv">
                   <Field
@@ -466,24 +466,18 @@ class Upload extends Component {
               <div className="numSelectDiv">
                 <div
                   onClick={() => {
-                    var participantsNumField = document.getElementById(
-                      "participantsNum"
-                    );
-                    if (
-                      participantsNumField &&
-                      participantsNumField.value > 2
-                    ) {
-                      participantsNumField.value--;
+                    if (this.state.participantsNum > 1) {
+                      this.state.participantsNum--;
                       document.getElementById(
                         "participantsNumText"
-                      ).innerHTML = `${participantsNumField.value}명`;
+                      ).innerHTML = `${this.state.participantsNum}명`;
                     }
-                    if (participantsNumField.value == 9) {
+                    if (this.state.participantsNum == 9) {
                       document.getElementById(
                         "plusParticipantsNum"
                       ).src = plusImgOn;
                     }
-                    if (participantsNumField.value <= 2) {
+                    if (this.state.participantsNum <= 1) {
                       document.getElementById(
                         "minusParticipantsNum"
                       ).src = minusImgOff;
@@ -491,7 +485,7 @@ class Upload extends Component {
                   }}
                 >
                   <button>
-                    <img src={minusImgOff} id="minusParticipantsNum" />
+                    <img src={minusImgOn} id="minusParticipantsNum" />
                   </button>
                 </div>
                 <div>
@@ -509,24 +503,18 @@ class Upload extends Component {
                 </div>
                 <div
                   onClick={() => {
-                    var participantsNumField = document.getElementById(
-                      "participantsNum"
-                    );
-                    if (
-                      participantsNumField &&
-                      participantsNumField.value < 10
-                    ) {
-                      participantsNumField.value++;
+                    if (this.state.participantsNum < 10) {
+                      this.state.participantsNum++;
                       document.getElementById(
                         "participantsNumText"
-                      ).innerHTML = `${participantsNumField.value}명`;
+                      ).innerHTML = `${this.state.participantsNum}명`;
                     }
-                    if (participantsNumField.value == 3) {
+                    if (this.state.participantsNum == 2) {
                       document.getElementById(
                         "minusParticipantsNum"
                       ).src = minusImgOn;
                     }
-                    if (participantsNumField.value >= 10) {
+                    if (this.state.participantsNum >= 10) {
                       document.getElementById(
                         "plusParticipantsNum"
                       ).src = plusImgOff;
@@ -616,4 +604,10 @@ class Upload extends Component {
   }
 }
 
-export default Upload;
+function mapStateToProps(state) {
+  return {
+    user: state.auth.user,
+  };
+}
+
+export default connect(mapStateToProps, { getCurrentUserInfo })(Upload);

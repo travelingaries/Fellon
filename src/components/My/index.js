@@ -8,7 +8,6 @@ import backButton from "../../images/icoBack.png";
 
 import firebase from "../../config/config.js";
 
-import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { getCurrentUserInfo, logoutUser } from "../../actions";
 
@@ -18,12 +17,15 @@ class My extends Component {
     this.state = {
       currentTab: 5,
       showModal: false,
+      user: {},
     };
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
   }
-  componentWillMount() {
-    this.props.getCurrentUserInfo();
+  componentDidMount() {
+    this.props.getCurrentUserInfo().then(() => {
+      this.setState({ user: this.props.user });
+    });
   }
   handleOpenModal() {
     this.setState({ showModal: true });
@@ -49,6 +51,7 @@ class My extends Component {
   };
 
   render() {
+    console.log("render with: ", this.state.user);
     return (
       <div className="regular-index">
         <ReactModal
@@ -114,6 +117,22 @@ class My extends Component {
             className="myTabBody"
             style={{ display: this.state.showModal ? "none" : "block" }}
           >
+            <div className="profileSummaryDiv">
+              <div className="profileImageDiv">
+                <img
+                  className="profileImage"
+                  src={this.state.user.profileImageUrl}
+                />
+              </div>
+              <div className="profileTextDiv">
+                <h3>{this.state.user.username}</h3>
+                <h6>
+                  {this.state.user.age === 1 ? "20" : "30"}대 /{" "}
+                  {this.state.user.gender === 1 ? "남" : "여"}
+                </h6>
+              </div>
+              <div className="line  "></div>
+            </div>
             <div className="nothingHere">
               <h4 style={{ fontSize: "20px", textAlign: "center" }}>
                 업로드한 영상이 없네요

@@ -34,6 +34,7 @@ class MyTabNavBar extends Component {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
+              marginLeft: "40px",
             }}
           >
             <h4 className="navCenterText">My</h4>
@@ -47,16 +48,6 @@ class MyTabNavBar extends Component {
               }}
               src={threeDots}
             />
-          </div>
-        </nav>
-        <nav>
-          <div className="myTabTabs" id="myUploadedTab">
-            <h3>업로드한 영상</h3>
-            <div className="tabUnderline"></div>
-          </div>
-          <div className="myTabTabs" id="myLikedTab">
-            <h3>좋아요한 영상</h3>
-            <div className="tabUnderline"></div>
           </div>
         </nav>
       </div>
