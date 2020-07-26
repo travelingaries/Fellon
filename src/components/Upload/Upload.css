@@ -91,6 +91,7 @@ h6 {
   display: flex;
   justify-content: space-between;
   padding: 5px 0;
+  width: 96%;
 }
 
 .themeImgDiv {
@@ -114,7 +115,7 @@ h6 {
 }
 
 #selectNumAndGender {
-  margin-top: -140px;
+  margin-top: 0px;
   z-index: 2;
 }
 

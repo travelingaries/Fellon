@@ -122,6 +122,7 @@ export const getCurrentUserInfo = () => async (dispatch) => {
           phoneNumber: user.phoneNumber || docSnapshot.data().phoneNumber,
           age: docSnapshot.data().age || 0,
           gender: docSnapshot.data().gender || 0,
+          posts: docSnapshot.data().posts || [],
         },
       });
     } else {
@@ -132,6 +133,7 @@ export const getCurrentUserInfo = () => async (dispatch) => {
         profileImageUrl: addMediaImg,
         age: 0,
         gender: 0,
+        posts: [],
       };
       dispatch({
         type: OVERWRITE_CURRENT_USER,

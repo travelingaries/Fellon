@@ -1,14 +1,13 @@
 import React, { Component } from "react";
 import NavBar from "../NavBar";
-import UploadTabTabBar from "../TabBar";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { Checkbox, Radio, rgbToHex, TextField } from "@material-ui/core";
-import Button from "../styledComponents/Button.js";
+import { Radio, TextField } from "@material-ui/core";
 import * as yup from "yup";
 
 import "./Upload.css";
 
 import uploadImg from "../../images/icoUploadVideo.png";
+import uploadedImg from "../../images/icoUploadVideoCheck.png";
 import theme1Img from "../../images/theme1.jpg";
 import theme2Img from "../../images/theme2.jpg";
 import theme3Img from "../../images/theme3.jpg";
@@ -41,7 +40,7 @@ const validationSchema = yup.object({
     .required(),
   theme: yup
     .string()
-    .matches(/^[1-6]$/)
+    .matches(/^[0-6]$/)
     .required(),
 });
 
@@ -56,10 +55,13 @@ class Upload extends Component {
       participantsNum: 2,
       currentUserDoc: null,
       user: {},
+      theme: 0,
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.handleVideoUpload = this.handleVideoUpload.bind(this);
     this.submitPostData = this.submitPostData.bind(this);
+    this.handleStateChange = this.handleStateChange.bind(this);
   }
   componentDidMount() {
     this.props.getCurrentUserInfo().then(() => {
@@ -76,13 +78,17 @@ class Upload extends Component {
     if (e.target.files[0]) {
       const video = e.target.files[0];
       this.setState({ video });
+      this.setState({ url: e.target.files[0].name });
     }
+  }
+  handleStateChange(type, e) {
+    this.setState({ [type]: e.target.value }, () => {});
   }
   handleVideoUpload() {
     const { video } = this.state;
-    console.log("video: ", video);
-    const storageRef = storage.ref(`userPosts/${video.name}`);
-    const uploadTask = storageRef.put(video);
+    console.log("video: ", this.state.video);
+    const storageRef = storage.ref(`userPosts/${this.state.video.name}`);
+    const uploadTask = storageRef.put(this.state.video);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -112,34 +118,84 @@ class Upload extends Component {
     );
   }
   submitPostData(data) {
-    const video = {
-      name: "asdf",
-    };
-    this.setState({ video });
-    const { title } = data;
-    const gender = parseInt(data.gender);
-    const theme = parseInt(data.theme);
-    const postData = {
-      title,
-      gender,
-      theme,
-      participantsNum: this.state.participantsNum,
-    };
-    console.log("post data: ", postData);
-    console.log(this.state.video);
+    // handle video upload
+    const { video } = this.state;
+    console.log("video: ", this.state.video);
+    const storageRef = storage.ref(`userPosts/${this.state.video.name}`);
+    const uploadTask = storageRef.put(this.state.video);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Progress function
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        this.setState({ progress });
+      },
+      (error) => {
+        // Error function
+        console.error(
+          "Error while uploading video to Firebase storage: ",
+          error
+        );
+      },
+      () => {
+        // Complete function
+        console.log("video upload completed");
+        this.setState({ progress: 0 });
+        storageRef.getDownloadURL().then((url) => {
+          this.setState({ url }, () => {
+            console.log("video url in storage: ", url);
+            const { title } = data;
+            const gender = parseInt(data.gender);
+            const theme = this.state.theme;
+            const postData = {
+              title,
+              gender,
+              theme,
+              participantsNum: this.state.participantsNum,
+              videoName: this.state.video.name,
+              videoUrl: url,
+              user: this.state.user,
+            };
+            console.log("posting data: ", postData);
 
-    return firestore
-      .collection("posts")
-      .doc(this.state.video.name + new Date().toString)
-      .set(postData)
-      .then(() => {
-        console.log("post data saved");
-      });
+            firestore
+              .collection("posts")
+              .doc(`${new Date().toISOString() + " " + this.state.video.name}`)
+              .set(postData)
+              .then(() => {
+                console.log("post data saved");
+                const concisePostData = {
+                  gender: postData.gender,
+                  participantsNum: postData.participantsNum,
+                  theme: postData.theme,
+                  title: postData.title,
+                  videoName: postData.videoName,
+                  videoUrl: postData.videoUrl,
+                };
+
+                // Add post data to user document
+                this.state.currentUserDoc.get().then((doc) => {
+                  const prevPosts = doc.data().posts;
+                  return this.state.currentUserDoc
+                    .update({
+                      posts: [...prevPosts, concisePostData],
+                    })
+                    .then(() => {
+                      console.log("added post data to user data");
+                      window.location.href = "/";
+                    });
+                });
+              });
+          });
+        });
+      }
+    );
   }
   addPostDataToUserData() {}
 
   render() {
-    console.log("rerendered with: ", this.state.participantsNum);
     return (
       <div className="regular-index">
         <NavBar currentTab={this.state.currentTab} />
@@ -175,7 +231,23 @@ class Upload extends Component {
                 videoToUploadInput.click();
               }}
             >
-              <img style={{ width: "46px" }} src={uploadImg} />
+              <img
+                style={{ width: "46px" }}
+                src={this.state.url === "" ? uploadImg : uploadedImg}
+              />
+            </div>
+            <div>
+              <progress
+                value={this.state.progress}
+                max="100"
+                style={{
+                  width: "100%",
+                  visibility:
+                    this.state.progress === 0 || this.state.progress === 100
+                      ? "hidden"
+                      : "visible",
+                }}
+              />
             </div>
           </div>
           <Formik
@@ -195,7 +267,6 @@ class Upload extends Component {
           >
             {({ values, errors, isSubmitting }) => (
               <Form>
-                <pre>{JSON.stringify(values, null, 2)}</pre>
                 <div className="elementDiv">
                   <div>
                     <h4>제목</h4>
@@ -247,6 +318,7 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme1"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                   <Field
                     name="theme"
@@ -255,6 +327,7 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme2"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                   <Field
                     name="theme"
@@ -263,6 +336,7 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme3"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                   <Field
                     name="theme"
@@ -271,6 +345,7 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme4"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                   <Field
                     name="theme"
@@ -279,6 +354,7 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme5"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                   <Field
                     name="theme"
@@ -287,20 +363,38 @@ class Upload extends Component {
                     as={Radio}
                     id="selectTheme6"
                     className="hiddenField"
+                    onChange={(e) => this.handleStateChange("theme", e)}
                   />
                 </div>
 
-                <div className="nextSignUpButton">
-                  <Button
+                <div
+                  className="nextSignUpButton"
+                  style={{ width: "100%", margin: 0 }}
+                >
+                  <button
                     disabled={isSubmitting}
                     type="submit"
                     className="consentSubmitButton"
+                    id="hiddenSubmitButton"
+                    ref={this.hiddenSubmitButton}
                     style={{
-                      display: "none",
+                      width: "100%",
                       backgroundColor:
-                        Object.keys(errors).length === 0
+                        Object.keys(errors).length === 0 &&
+                        this.state.video &&
+                        this.state.url !== "" &&
+                        values.title !== "" &&
+                        this.state.theme !== "0"
                           ? "#f50057"
                           : "rgb(221,221,221)",
+                      borderRadius: "5px",
+                      position: "fixed",
+                      bottom: "0",
+                      left: "0",
+                      right: "0",
+                      maxWidth: "460px",
+                      height: "40px",
+                      margin: "0 auto",
                     }}
                     id="uploadPostButton"
                     onClick={() => {
@@ -310,11 +404,15 @@ class Upload extends Component {
                             Object.keys(errors)[0]
                           }`
                         );
+                      } else if (this.state.theme == "0") {
+                        window.alert(`테마를 선택해야 합니다.`);
+                      } else if (this.state.url === "") {
+                        window.alert(`영상을 첨부해야 합니다.`);
                       }
                     }}
                   >
                     →
-                  </Button>
+                  </button>
                 </div>
               </Form>
             )}
@@ -322,7 +420,7 @@ class Upload extends Component {
 
           <div className="elementDiv" id="selectNumAndGender">
             <div>
-              <h4>인원·성별</h4>
+              <h4>참여 가능 성별</h4>
               <div>
                 <div className="genderSelectDiv">
                   <div
@@ -463,6 +561,7 @@ class Upload extends Component {
                   </div>
                 </div>
               </div>
+              <h4>모임 주최 인원</h4>
               <div className="numSelectDiv">
                 <div
                   onClick={() => {
@@ -538,7 +637,37 @@ class Upload extends Component {
                     document.getElementById("selectTheme1").click();
                   }}
                 >
-                  <img src={theme1Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "1"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme1Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "1"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    맛집
+                  </h5>
                 </div>
                 <div
                   className="themeImgDiv"
@@ -546,7 +675,37 @@ class Upload extends Component {
                     document.getElementById("selectTheme2").click();
                   }}
                 >
-                  <img src={theme2Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "2"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme2Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "2"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    벙개
+                  </h5>
                 </div>
                 <div
                   className="themeImgDiv"
@@ -554,17 +713,77 @@ class Upload extends Component {
                     document.getElementById("selectTheme3").click();
                   }}
                 >
-                  <img src={theme3Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "3"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme3Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "3"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    음악
+                  </h5>
                 </div>
               </div>
-              <div className="themeRow">
+              <div className="themeRow" style={{ marginTop: "10px" }}>
                 <div
                   className="themeImgDiv"
                   onClick={() => {
                     document.getElementById("selectTheme4").click();
                   }}
                 >
-                  <img src={theme4Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "4"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme4Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "4"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    여행
+                  </h5>
                 </div>
                 <div
                   className="themeImgDiv"
@@ -572,7 +791,37 @@ class Upload extends Component {
                     document.getElementById("selectTheme5").click();
                   }}
                 >
-                  <img src={theme5Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "5"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme5Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "5"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    소모임
+                  </h5>
                 </div>
                 <div
                   className="themeImgDiv"
@@ -580,25 +829,42 @@ class Upload extends Component {
                     document.getElementById("selectTheme6").click();
                   }}
                 >
-                  <img src={theme6Img} />
+                  <div
+                    style={{
+                      border:
+                        this.state.theme === "6"
+                          ? "1.5px solid rgb(255,87,115)"
+                          : "1.5px solid white",
+                      borderRadius: "100%",
+                      padding: "5px",
+                      width: "80px",
+                      height: "80px",
+                    }}
+                  >
+                    <img
+                      src={theme6Img}
+                      style={{ width: "80px", height: "80px" }}
+                    />
+                  </div>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      margin: "3px auto",
+                      width: "92px",
+                      fontSize: "15px",
+                      color:
+                        this.state.theme === "6"
+                          ? "rgb(255,87,115)"
+                          : "#363636",
+                    }}
+                  >
+                    운동
+                  </h5>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <footer
-          id="uploadTabTabBar"
-          className="notReady"
-          onClick={() => {
-            document.getElementById("uploadPostButton").click();
-          }}
-        >
-          <nav style={{ position: "relative" }}>
-            <a href="#" style={{ textDecoration: "none" }}>
-              <div className="submitUpload">업로드하기</div>
-            </a>
-          </nav>
-        </footer>
       </div>
     );
   }

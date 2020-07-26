@@ -21,6 +21,7 @@ class MiddlePage extends Component {
           // Create new user document
           const userData = {
             phoneNumber: firebase.auth().currentUser.phoneNumber,
+            posts: [],
           };
           return firestore
             .collection("users")
@@ -43,6 +44,8 @@ class MiddlePage extends Component {
       .then((doc) => {
         try {
           if (doc.data().username) {
+            console.log("logged in success");
+            window.location.href = "/";
           } else {
             console.log("user has no username data");
             window.location.href = "/editProfile";

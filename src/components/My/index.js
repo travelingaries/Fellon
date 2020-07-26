@@ -87,7 +87,31 @@ class My extends Component {
                   <span style={{ color: "rgb(255,85,117)" }}>하트받기</span>
                 </p>
               </div>
-              <div style={{ marginTop: "28%" }} onClick={this.logout}>
+              <div
+                style={{ marginTop: "20%", paddingBottom: "12%" }}
+                onClick={() => {
+                  window.location.href = "/editProfile";
+                }}
+              >
+                <div style={{ float: "left" }}>
+                  <p
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "18px",
+                      margin: "0px",
+                    }}
+                  >
+                    프로필 수정
+                  </p>
+                </div>
+                <div style={{ float: "right" }}>
+                  <img src={backButton} className="flip" />
+                </div>
+              </div>
+              <div
+                style={{ clear: "both", paddingTop: "4%" }}
+                onClick={this.logout}
+              >
                 <div style={{ float: "left" }}>
                   <p
                     style={{

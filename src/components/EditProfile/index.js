@@ -214,7 +214,7 @@ class EditProfile extends Component {
             <h4 className="navCenterText">프로필 수정</h4>
           </div>
         </nav>
-        <div className="regular-index">
+        <div className="regular-index-editProfile">
           <div className="container">
             <div
               className="setProfilePictureDiv"
