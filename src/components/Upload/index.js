@@ -151,6 +151,16 @@ class Upload extends Component {
             const theme = this.state.theme;
             const createdAt = new Date().toISOString();
 
+            const conciseUserData = {
+              age: this.state.user.age,
+              gender: this.state.user.gender,
+              phoneNumber: this.state.user.phoneNumber,
+              profileImageUrl: this.state.user.profileImageUrl,
+              profileImageUrlName: this.state.user.profileImageUrlName,
+              uid: this.state.user.uid,
+              username: this.state.user.username,
+            };
+
             const postData = {
               title,
               gender,
@@ -158,7 +168,7 @@ class Upload extends Component {
               participantsNum: this.state.participantsNum,
               videoName: this.state.video.name,
               videoUrl: url,
-              user: this.state.user,
+              user: conciseUserData,
               createdAt,
             };
             console.log("posting data: ", postData);

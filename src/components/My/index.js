@@ -20,7 +20,6 @@ class My extends Component {
       currentTab: 5,
       showModal: false,
       user: {},
-      posts: [],
     };
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
@@ -28,25 +27,10 @@ class My extends Component {
   componentDidMount() {
     this.props.getCurrentUserInfo().then(() => {
       this.setState({ user: this.props.user }, () => {
-        console.log("got here");
-        try {
-          firestore
-            .collection("posts")
-            .where("user.uid", "==", this.state.user.uid)
-            .orderBy("createdAt", "desc")
-            .get()
-            .then((posts) => {
-              this.setState(
-                { posts: posts.docs.map((doc) => doc.data()) },
-                console.log(
-                  `user ${this.state.user.username}'s posts: `,
-                  this.state.posts
-                )
-              );
-            });
-        } catch (err) {
-          console.error(err);
-        }
+        console.log(
+          `user ${this.state.user.username}'s posts: `,
+          this.state.user.posts
+        );
       });
     });
   }
@@ -205,4 +189,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, { getCurrentUserInfo })(My);
+export default connect(mapStateToProps, { getCurrentUserInfo, logoutUser })(My);
