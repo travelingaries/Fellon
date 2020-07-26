@@ -6,10 +6,12 @@ import NavBar from "../NavBar";
 import "./My.css";
 import backButton from "../../images/icoBack.png";
 
-import firebase from "../../config/config.js";
-
 import { connect } from "react-redux";
 import { getCurrentUserInfo, logoutUser } from "../../actions";
+
+import firebase from "../../config/config.js";
+firebase.auth().useDeviceLanguage();
+const firestore = firebase.firestore();
 
 class My extends Component {
   constructor() {
@@ -18,13 +20,34 @@ class My extends Component {
       currentTab: 5,
       showModal: false,
       user: {},
+      posts: [],
     };
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
   }
   componentDidMount() {
     this.props.getCurrentUserInfo().then(() => {
-      this.setState({ user: this.props.user });
+      this.setState({ user: this.props.user }, () => {
+        console.log("got here");
+        try {
+          firestore
+            .collection("posts")
+            .where("user.uid", "==", this.state.user.uid)
+            .orderBy("createdAt", "desc")
+            .get()
+            .then((posts) => {
+              this.setState(
+                { posts: posts.docs.map((doc) => doc.data()) },
+                console.log(
+                  `user ${this.state.user.username}'s posts: `,
+                  this.state.posts
+                )
+              );
+            });
+        } catch (err) {
+          console.error(err);
+        }
+      });
     });
   }
   handleOpenModal() {
@@ -51,7 +74,6 @@ class My extends Component {
   };
 
   render() {
-    console.log("render with: ", this.state.user);
     return (
       <div className="regular-index">
         <ReactModal

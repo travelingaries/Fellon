@@ -149,6 +149,8 @@ class Upload extends Component {
             const { title } = data;
             const gender = parseInt(data.gender);
             const theme = this.state.theme;
+            const createdAt = new Date().toISOString();
+
             const postData = {
               title,
               gender,
@@ -157,12 +159,12 @@ class Upload extends Component {
               videoName: this.state.video.name,
               videoUrl: url,
               user: this.state.user,
+              createdAt,
             };
             console.log("posting data: ", postData);
-
             firestore
               .collection("posts")
-              .doc(`${new Date().toISOString() + " " + this.state.video.name}`)
+              .doc(`${createdAt + " " + this.state.video.name}`)
               .set(postData)
               .then(() => {
                 console.log("post data saved");
@@ -173,6 +175,7 @@ class Upload extends Component {
                   title: postData.title,
                   videoName: postData.videoName,
                   videoUrl: postData.videoUrl,
+                  createdAt,
                 };
 
                 // Add post data to user document
