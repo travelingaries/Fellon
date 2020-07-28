@@ -49,7 +49,7 @@ class Upload extends Component {
     super();
     this.state = {
       currentTab: 3,
-      video: null,
+      media: null,
       url: "",
       progress: 0,
       participantsNum: 2,
@@ -59,7 +59,7 @@ class Upload extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleVideoUpload = this.handleVideoUpload.bind(this);
+    this.handleMediaUpload = this.handleMediaUpload.bind(this);
     this.submitPostData = this.submitPostData.bind(this);
     this.handleStateChange = this.handleStateChange.bind(this);
   }
@@ -76,19 +76,19 @@ class Upload extends Component {
   }
   handleChange(e) {
     if (e.target.files[0]) {
-      const video = e.target.files[0];
-      this.setState({ video });
+      const media = e.target.files[0];
+      this.setState({ media });
       this.setState({ url: e.target.files[0].name });
     }
   }
   handleStateChange(type, e) {
     this.setState({ [type]: e.target.value }, () => {});
   }
-  handleVideoUpload() {
-    const { video } = this.state;
-    console.log("video: ", this.state.video);
-    const storageRef = storage.ref(`userPosts/${this.state.video.name}`);
-    const uploadTask = storageRef.put(this.state.video);
+  handleMediaUpload() {
+    const { media } = this.state;
+    console.log("media: ", this.state.media);
+    const storageRef = storage.ref(`userPosts/${this.state.media.name}`);
+    const uploadTask = storageRef.put(this.state.media);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -101,28 +101,28 @@ class Upload extends Component {
       (error) => {
         // Error function
         console.error(
-          "Error while uploading video to Firebase storage: ",
+          "Error while uploading media to Firebase storage: ",
           error
         );
       },
       () => {
         // Complete function
-        console.log("video upload completed");
+        console.log("media upload completed");
         this.setState({ progress: 0 });
         storageRef.getDownloadURL().then((url) => {
           this.setState({ url }, () => {
-            console.log("video url in storage: ", url);
+            console.log("media url in storage: ", url);
           });
         });
       }
     );
   }
   submitPostData(data) {
-    // handle video upload
-    const { video } = this.state;
-    console.log("video: ", this.state.video);
-    const storageRef = storage.ref(`userPosts/${this.state.video.name}`);
-    const uploadTask = storageRef.put(this.state.video);
+    // handle media upload
+    const { media } = this.state;
+    console.log("media: ", this.state.media);
+    const storageRef = storage.ref(`userPosts/${this.state.media.name}`);
+    const uploadTask = storageRef.put(this.state.media);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -135,72 +135,71 @@ class Upload extends Component {
       (error) => {
         // Error function
         console.error(
-          "Error while uploading video to Firebase storage: ",
+          "Error while uploading media to Firebase storage: ",
           error
         );
       },
       () => {
         // Complete function
-        console.log("video upload completed");
+        console.log("media upload completed");
         this.setState({ progress: 0 });
         storageRef.getDownloadURL().then((url) => {
           this.setState({ url }, () => {
-            console.log("video url in storage: ", url);
-            const { title } = data;
-            const gender = parseInt(data.gender);
-            const theme = this.state.theme;
-            const createdAt = new Date().toISOString();
+            console.log("media url in storage: ", url);
 
-            const conciseUserData = {
-              age: this.state.user.age,
-              gender: this.state.user.gender,
-              phoneNumber: this.state.user.phoneNumber,
-              profileImageUrl: this.state.user.profileImageUrl,
-              profileImageUrlName: this.state.user.profileImageUrlName,
-              uid: this.state.user.uid,
-              username: this.state.user.username,
-            };
+            storageRef.getMetadata().then((metadata) => {
+              const { title } = data;
+              const gender = parseInt(data.gender);
+              const theme = this.state.theme;
+              const createdAt = new Date().toISOString();
 
-            const postData = {
-              title,
-              gender,
-              theme,
-              participantsNum: this.state.participantsNum,
-              videoName: this.state.video.name,
-              videoUrl: url,
-              user: conciseUserData,
-              createdAt,
-            };
-            console.log("posting data: ", postData);
-            firestore
-              .collection("posts")
-              .doc(`${createdAt + " " + this.state.video.name}`)
-              .set(postData)
-              .then(() => {
-                console.log("post data saved");
-                const concisePostData = {
-                  gender: postData.gender,
-                  participantsNum: postData.participantsNum,
-                  theme: postData.theme,
-                  title: postData.title,
-                  videoName: postData.videoName,
-                  videoUrl: postData.videoUrl,
-                  createdAt,
-                };
+              const conciseUserData = {
+                uid: this.state.user.uid,
+              };
+              const mediaData = {
+                name: this.state.media.name,
+                url,
+                contentType: metadata.contentType,
+              };
+              const postData = {
+                title,
+                gender,
+                theme,
+                participantsNum: this.state.participantsNum,
+                media: mediaData,
+                user: conciseUserData,
+                createdAt,
+              };
+              console.log("posting data: ", postData);
+              firestore
+                .collection("posts")
+                .doc(`${createdAt + " " + this.state.media.name}`)
+                .set(postData)
+                .then(() => {
+                  console.log("post data saved");
+                  const concisePostData = {
+                    gender: postData.gender,
+                    participantsNum: postData.participantsNum,
+                    theme: postData.theme,
+                    title: postData.title,
+                    media: mediaData,
+                    createdAt,
+                  };
 
-                // Add post data to user document
-                this.state.currentUserDoc.get().then((doc) => {
-                  const prevPosts = doc.data().posts;
-                  return this.state.currentUserDoc
-                    .update({
-                      posts: [...prevPosts, concisePostData],
-                    })
-                    .then(() => {
-                      console.log("added post data to user data");
-                      window.location.href = "/";
-                    });
+                  // Add post data to user document
+                  this.state.currentUserDoc.get().then((doc) => {
+                    const prevPosts = doc.data().posts;
+                    return this.state.currentUserDoc
+                      .update({
+                        posts: [...prevPosts, concisePostData],
+                      })
+                      .then(() => {
+                        console.log("added post data to user data");
+                        window.location.href = "/";
+                      });
+                  });
                 });
-              });
+            });
           });
         });
       }
@@ -216,7 +215,7 @@ class Upload extends Component {
           <div>
             <input
               type="file"
-              id="videoToUploadInput"
+              id="mediaToUploadInput"
               onChange={this.handleChange}
               style={{
                 display: "block",
@@ -224,24 +223,26 @@ class Upload extends Component {
                 top: "90px",
                 visibility: "hidden",
               }}
-              accept="video/*"
+              accept="video/*,image/*"
             ></input>
           </div>
           <div className="elementDiv">
             <div style={{ float: "left" }}>
-              <h4 style={{ marginBottom: "0px" }}>동영상 업로드</h4>
+              <h4 style={{ marginBottom: "0px" }}>
+                자기 소개 사진 / 동영상 업로드
+              </h4>
               <p style={{ color: "rgb(180,180,180)", fontSize: "12px" }}>
-                베타버전은 사진보관함에 있는 동영상 <br />
-                파일만 업로드 기능만 제공합니다.
+                베타버전은 사진 보관함에 있는 <br />
+                미디어 파일만 업로드 가능합니다.
               </p>
             </div>
             <div
               className="uploadButtonDiv"
               onClick={() => {
-                var videoToUploadInput = document.getElementById(
-                  "videoToUploadInput"
+                var mediaToUploadInput = document.getElementById(
+                  "mediaToUploadInput"
                 );
-                videoToUploadInput.click();
+                mediaToUploadInput.click();
               }}
             >
               <img
@@ -394,7 +395,7 @@ class Upload extends Component {
                       width: "100%",
                       backgroundColor:
                         Object.keys(errors).length === 0 &&
-                        this.state.video &&
+                        this.state.media &&
                         this.state.url !== "" &&
                         values.title !== "" &&
                         this.state.theme !== "0"
@@ -439,7 +440,6 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
-                      console.log("run male");
                       var selectGenderMale = document.getElementById(
                         "selectGenderMale"
                       );
@@ -485,7 +485,6 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
-                      console.log("run female");
                       var selectGenderFemale = document.getElementById(
                         "selectGenderFemale"
                       );
@@ -531,7 +530,6 @@ class Upload extends Component {
                   <div
                     style={{ float: "left", paddingBottom: "4px" }}
                     onClick={() => {
-                      console.log("run both");
                       var selectGenderBoth = document.getElementById(
                         "selectGenderBoth"
                       );
@@ -574,7 +572,7 @@ class Upload extends Component {
                   </div>
                 </div>
               </div>
-              <h4>모임 주최 인원</h4>
+              <h4>(본인 포함) 주최 인원</h4>
               <div className="numSelectDiv">
                 <div
                   onClick={() => {
