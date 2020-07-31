@@ -1,14 +1,17 @@
 import React, { Component } from "react";
-import Post from "../styledComponents/Post";
 
 import "./home.css";
+
+import threeDotsButton from "../../images/icoThreeDots.png";
 
 import { connect } from "react-redux";
 import { getCurrentUserInfo, getAllPosts } from "../../actions";
 
 import firebase from "../../config/config.js";
 firebase.auth().useDeviceLanguage();
+
 const firestore = firebase.firestore();
+const storage = firebase.storage();
 
 class HomeBody extends Component {
   constructor(props) {
@@ -32,27 +35,183 @@ class HomeBody extends Component {
     });
   }
 
+  deletePost(post) {
+    console.log("initiate delete of post ", post);
+    try {
+      // delete post media from firebase storage
+      const deleteTask = storage.ref(`userPosts/${post.media.name}`);
+      deleteTask.delete().then(() => {
+        console.log("media deleted from storage");
+      });
+      // delete post data from firestore
+      firestore
+        .collection("posts")
+        .doc(`${post.createdAt} ${post.media.name}`)
+        .delete()
+        .then(() => {
+          console.log("post data deleted from firestore");
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   render() {
     return (
-      <div className="startContainer">
-        {this.state.posts.map((post) => {
-          if (post.media.contentType.split("/")[0] === "image") {
-            return (
-              <div className="postContainer">
-                <p>{post.title}</p>
-                <img width="320" height="240" src={post.media.url} />
-              </div>
+      <div className="homeTabContainer">
+        <div
+          id="scrim"
+          onClick={() => {
+            /* Hide popped up post options */
+            var listOptions = document.getElementsByClassName("postOptions");
+            for (var i = 0; i < listOptions.length; i++) {
+              listOptions[i].style["display"] = "none";
+            }
+            /* Hide popped up post prompts */
+            var listPrompts = document.getElementsByClassName(
+              "postDeletePrompt"
             );
-          } else if (post.media.contentType.split("/")[0] === "video") {
-            return (
-              <div className="postContainer">
-                <p>{post.title}</p>
-                <video width="320" height="240" controls>
-                  <source src={post.media.url} type={post.media.contentType} />
+            for (var i = 0; i < listPrompts.length; i++) {
+              listPrompts[i].style["display"] = "none";
+            }
+            document.getElementById("scrim").style.display = "none";
+          }}
+        ></div>
+        {this.state.posts.length === 0 ? (
+          <div className="nothingHere">
+            <h4 style={{ fontSize: "20px", textAlign: "center" }}>
+              아직 영상이 없네요
+            </h4>
+            <p>업로드탭에서 첫 번째 영상을 올려보세요!</p>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {this.state.posts.map((post, index) => {
+          return (
+            <div
+              className="postContainer"
+              key={index}
+              id={"postContainer" + index}
+            >
+              {post.media.contentType.split("/")[0] === "image" ? (
+                <img className="postMedia" src={post.media.url} />
+              ) : post.media.contentType.split("/")[0] === "video" ? (
+                <video controls className="postMedia">
+                  <source
+                    src={post.media.url}
+                    type={post.media.contentType}
+                    className="posterProfileImage"
+                  />
                 </video>
+              ) : (
+                <div></div>
+              )}
+              <div className="postSummaryContainer">
+                <img
+                  src={this.state.user.profileImageUrl}
+                  className="posterProfileImage"
+                />
+                {/* If own post, show options */}
+                {post.user.uid === this.state.user.uid ? (
+                  <div>
+                    <div
+                      className="postOptionsButtonDiv"
+                      onClick={() => {
+                        document.getElementById(
+                          "postOption" + index
+                        ).style.display = "block";
+                        document.getElementById("scrim").style.display =
+                          "block";
+                      }}
+                    >
+                      <img
+                        src={threeDotsButton}
+                        className="postOptionsButton"
+                      />
+                      <div
+                        className="postOptions"
+                        id={"postOption" + index}
+                        onClick={(e) => {
+                          // Show prompt for deleting post
+                          document.getElementById(
+                            "postDeletePrompt" + index
+                          ).style.display = "block";
+                        }}
+                      >
+                        <p>삭제</p>
+                      </div>
+                    </div>
+                    <div
+                      className="postDeletePrompt"
+                      id={"postDeletePrompt" + index}
+                    >
+                      <h4 className="postDeletePromptDescription">
+                        정말로 삭제하시겠습니까?
+                      </h4>
+                      <div className="postDeletePromptOptionsDiv">
+                        <div
+                          className="postDeletePromptOption"
+                          id="postDeletePromptOptionYes"
+                          onClick={() => {
+                            document.getElementById("scrim").click();
+                            this.deletePost(post);
+                            document.getElementById(
+                              "postContainer" + index
+                            ).style.display = "none";
+                          }}
+                        >
+                          네
+                        </div>
+                        <div
+                          className="postDeletePromptOption"
+                          id="postDeletePromptOptionNo"
+                          onClick={() => {
+                            document.getElementById("scrim").click();
+                          }}
+                        >
+                          아니요
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+                <div
+                  className="postSummary"
+                  onClick={() => {
+                    var list = document.getElementsByClassName("postOptions");
+                    for (var i = 0; i < list.length; i++) {
+                      list[i].style["display"] = "none";
+                    }
+                  }}
+                >
+                  <h4 className="postTitle">{post.title}</h4>
+                  <p className="postDescription">
+                    #{post.participantsNum}명이_주최{"  "}#
+                    {post.gender === 1
+                      ? "#남성 "
+                      : post.gender === 2
+                      ? "#여성 "
+                      : "남녀혼성 "}
+                    {"  "}#
+                    {post.theme === "1"
+                      ? "맛집"
+                      : post.theme === "2"
+                      ? "벙개"
+                      : post.theme === "3"
+                      ? "음악"
+                      : post.theme === "4"
+                      ? "여행"
+                      : post.theme === "5"
+                      ? "소모임"
+                      : post.theme === "운동"}
+                  </p>
+                </div>
               </div>
-            );
-          }
+            </div>
+          );
         })}
       </div>
     );

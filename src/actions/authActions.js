@@ -15,8 +15,6 @@ import {
 import addMediaImg from "../images/uploadProfileImage.jpg";
 
 import firebase from "../config/config.js";
-import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
-import { reduxFirestore, getFirestore } from "redux-firestore";
 const firestore = firebase.firestore();
 
 const requestLogin = () => {

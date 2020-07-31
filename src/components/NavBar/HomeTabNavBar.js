@@ -18,7 +18,12 @@ class HomeTabNavBar extends Component {
         <nav
           className="navBar"
           id="HomeTabNavBar"
-          style={{ position: "relative", display: "flex" }}
+          style={{
+            position: "fixed",
+            top: "0",
+            backgroundColor: "white",
+            display: "flex",
+          }}
         >
           <div onClick={this.handleClickSettings}>
             <img

@@ -14,6 +14,12 @@ class Post extends Component {
       createdAt: this.props.post.createdAt,
     };
   }
+
+  isImageFile(path) {
+    const mimeType = URLConnection.guessContentTypeFromName(path);
+    return mimeType != null && mimeType.start;
+  }
+
   render() {
     return (
       <div className="postContainer">

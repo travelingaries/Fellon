@@ -29,7 +29,7 @@ class App extends Component {
           style={{
             width: "100%",
             textAlign: "center",
-            backgroundContainer: "rgb(221,221,221)",
+            backgroundContainer: "rgb(235,235,235)",
           }}
         >
           <div
@@ -42,7 +42,7 @@ class App extends Component {
               display: "flex",
               justifyContent: "center",
               backgroundColor: "white",
-              height: "99vh",
+              minHeight: "99vh",
               border: "1px solid #e0e0e0",
             }}
           >
