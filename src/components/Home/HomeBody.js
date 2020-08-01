@@ -55,6 +55,60 @@ class HomeBody extends Component {
       console.error(err);
     }
   }
+  joinRequest(post) {
+    console.log("requested to join: ", post);
+    try {
+      firestore
+        .collection("posts")
+        .doc(`${post.createdAt} ${post.media.name}`)
+        .get()
+        .then((doc) => {
+          const prevJoinRequested = doc.data().joinRequested;
+          return firestore
+            .collection("posts")
+            .doc(`${post.createdAt} ${post.media.name}`)
+            .update({
+              joinRequested: [...prevJoinRequested, this.state.user.uid],
+            })
+            .then(() => {
+              console.log("join request successfully sent");
+              this.componentDidMount();
+            });
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  cancelJoinRequest(post) {
+    console.log("cancelling request to join: ", post);
+    try {
+      firestore
+        .collection("posts")
+        .doc(`${post.createdAt} ${post.media.name}`)
+        .get()
+        .then((doc) => {
+          const prevJoinRequested = doc.data().joinRequested;
+          for (var i = 0; i < prevJoinRequested.length; i++) {
+            if (prevJoinRequested[i] === this.state.user.uid) {
+              prevJoinRequested.splice(i, 1);
+              i--;
+            }
+          }
+          return firestore
+            .collection("posts")
+            .doc(`${post.createdAt} ${post.media.name}`)
+            .update({
+              joinRequested: [...prevJoinRequested],
+            })
+            .then(() => {
+              console.log("join request successfully cancelled");
+              this.componentDidMount();
+            });
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   render() {
     return (
@@ -206,6 +260,55 @@ class HomeBody extends Component {
                   </p>
                 </div>
               </div>
+              {/* If not own post, show join request button */}
+              {post.user.uid !== this.state.user.uid ? (
+                <div>
+                  <div className="joinRequestButtonDiv">
+                    {/* Show Join or Cancel Request Button */}
+                    {!post.joinRequested.includes(this.state.user.uid) ? (
+                      <div
+                        className="joinRequestButton"
+                        id={"joinRequestButton" + index}
+                        onClick={() => {
+                          if (
+                            !post.joinRequested.includes(this.state.user.uid)
+                          ) {
+                            this.joinRequest(post);
+                          } else {
+                            this.cancelJoinRequest(post);
+                          }
+                        }}
+                      >
+                        <p className="joinRequestText">참여 신청</p>
+                      </div>
+                    ) : (
+                      <div
+                        className="joinRequestButton"
+                        id={"cancelRequestButton" + index}
+                        style={{ backgroundColor: "blue" }}
+                        onClick={() => {
+                          if (
+                            !post.joinRequested.includes(this.state.user.uid)
+                          ) {
+                            this.joinRequest(post);
+                          } else {
+                            this.cancelJoinRequest(post);
+                          }
+                        }}
+                      >
+                        <p className="joinRequestText">참여 신청 취소</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: "14px",
+                    width: "100%",
+                  }}
+                ></div>
+              )}
             </div>
           );
         })}

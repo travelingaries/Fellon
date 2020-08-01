@@ -169,6 +169,8 @@ class Upload extends Component {
                 media: mediaData,
                 user: conciseUserData,
                 createdAt,
+                joinRequested: [],
+                matchedWith: [],
               };
               console.log("posting data: ", postData);
               firestore
@@ -177,6 +179,7 @@ class Upload extends Component {
                 .set(postData)
                 .then(() => {
                   console.log("post data saved");
+                  /*
                   const concisePostData = {
                     gender: postData.gender,
                     participantsNum: postData.participantsNum,
@@ -184,7 +187,7 @@ class Upload extends Component {
                     title: postData.title,
                     media: mediaData,
                     createdAt,
-                  };
+                  };*/
 
                   // Add post data to user document
                   /*this.state.currentUserDoc.get().then((doc) => {
