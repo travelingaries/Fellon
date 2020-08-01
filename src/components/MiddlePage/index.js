@@ -21,7 +21,6 @@ class MiddlePage extends Component {
           // Create new user document
           const userData = {
             phoneNumber: firebase.auth().currentUser.phoneNumber,
-            posts: [],
           };
           return firestore
             .collection("users")

@@ -98,18 +98,14 @@ class HomeBody extends Component {
                 <img className="postMedia" src={post.media.url} />
               ) : post.media.contentType.split("/")[0] === "video" ? (
                 <video controls className="postMedia">
-                  <source
-                    src={post.media.url}
-                    type={post.media.contentType}
-                    className="posterProfileImage"
-                  />
+                  <source src={post.media.url} type={post.media.contentType} />
                 </video>
               ) : (
                 <div></div>
               )}
               <div className="postSummaryContainer">
                 <img
-                  src={this.state.user.profileImageUrl}
+                  src={post.user.profileImageUrl}
                   className="posterProfileImage"
                 />
                 {/* If own post, show options */}

@@ -187,7 +187,7 @@ class Upload extends Component {
                   };
 
                   // Add post data to user document
-                  this.state.currentUserDoc.get().then((doc) => {
+                  /*this.state.currentUserDoc.get().then((doc) => {
                     const prevPosts = doc.data().posts;
                     return this.state.currentUserDoc
                       .update({
@@ -197,7 +197,7 @@ class Upload extends Component {
                         console.log("added post data to user data");
                         window.location.href = "/";
                       });
-                  });
+                  });*/
                 });
             });
           });

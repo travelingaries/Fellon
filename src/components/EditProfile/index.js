@@ -87,7 +87,6 @@ class EditProfile extends Component {
   }
   handleImageUpload() {
     const { image, imageName } = this.state;
-    console.log("image: ", image);
 
     const storageRef = storage.ref(`profileImages/${imageName}`);
     const uploadTask = storageRef.put(image);
@@ -119,11 +118,26 @@ class EditProfile extends Component {
             // Delete previous profile image from storage if it exists
             currentUserDoc.get().then((doc) => {
               if (doc.data().profileImageUrlName) {
-                try {
-                  const deleteTask = storage
-                    .ref("profileImages")
-                    .child(doc.data().profileImageUrlName);
-                  deleteTask.delete().then(() => {
+                const deleteTask = storage
+                  .ref("profileImages")
+                  .child(doc.data().profileImageUrlName);
+                if (deleteTask != null) {
+                  try {
+                    deleteTask.delete().then(() => {
+                      // Add new profile image data to firestore
+                      const userData = {
+                        profileImageUrl: this.state.url,
+                        profileImageUrlName: this.state.imageName,
+                      };
+                      currentUserDoc.update(userData).then(() => {
+                        console.log(`user's profile pic was updated`);
+                      });
+                    });
+                  } catch (error) {
+                    console.log(
+                      "error while deleting previous profile image: ",
+                      error
+                    );
                     // Add new profile image data to firestore
                     const userData = {
                       profileImageUrl: this.state.url,
@@ -132,12 +146,8 @@ class EditProfile extends Component {
                     currentUserDoc.update(userData).then(() => {
                       console.log(`user's profile pic was updated`);
                     });
-                  });
-                } catch (error) {
-                  console.log(
-                    "error while deleting previous profile image: ",
-                    error
-                  );
+                  }
+                } else {
                   // Add new profile image data to firestore
                   const userData = {
                     profileImageUrl: this.state.url,
