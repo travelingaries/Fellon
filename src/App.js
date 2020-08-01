@@ -44,6 +44,7 @@ class App extends Component {
               backgroundColor: "white",
               minHeight: "99vh",
               border: "1px solid #e0e0e0",
+              overflowX: "hidden",
             }}
           >
             <Switch>
@@ -82,6 +83,13 @@ class App extends Component {
                 exact
                 path="/loadingUser"
                 component={MiddlePage}
+                isAuthenticated={isAuthenticated}
+                isVerifying={isVerifying}
+              />
+              <ProtectedRoute
+                exact
+                path="/notification"
+                component={Notification}
                 isAuthenticated={isAuthenticated}
                 isVerifying={isVerifying}
               />

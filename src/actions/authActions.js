@@ -9,7 +9,6 @@ import {
   VERIFY_SUCCESS,
   UPDATE_CURRENT_USER,
   OVERWRITE_CURRENT_USER,
-  GET_ALL_POSTS,
 } from "../actions/actionTypes";
 
 import addMediaImg from "../images/uploadProfileImage.jpg";
@@ -139,33 +138,6 @@ export const getCurrentUserInfo = () => async (dispatch) => {
         user: newInfo,
       });
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-export const getAllPosts = () => async (dispatch) => {
-  try {
-    const posts = await firestore
-      .collection("posts")
-      .orderBy("createdAt", "desc")
-      .get()
-      .then((posts) => {
-        return (posts = posts.docs.map((doc) => doc.data()));
-      });
-    for (var i = 0; i < posts.length; i++) {
-      posts[i].user.profileImageUrl = await firestore
-        .collection("users")
-        .doc(posts[i].user.uid)
-        .get()
-        .then((doc) => {
-          return doc.data().profileImageUrl;
-        });
-    }
-    dispatch({
-      type: GET_ALL_POSTS,
-      posts,
-    });
   } catch (err) {
     console.error(err);
   }

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
 
 import UploadTabTabBar from "./UploadTabTabBar";
 import "./TabBar.css";
@@ -41,17 +40,22 @@ class TabBar extends Component {
                   />
                 </div>
               </a>
-              <a href="/search">
-                <div className="tab">
-                  <img
-                    src={
-                      this.state.currentTab === 2
-                        ? SearchTabImgOn
-                        : SearchTabImgOff
-                    }
-                  />
-                </div>
-              </a>
+              <div
+                className="tab"
+                onClick={() => {
+                  window.alert(
+                    "베타 버전에서는 아직 제공되지 않는 기능입니다 :'("
+                  );
+                }}
+              >
+                <img
+                  src={
+                    this.state.currentTab === 2
+                      ? SearchTabImgOn
+                      : SearchTabImgOff
+                  }
+                />
+              </div>
               <a href="/upload">
                 <div className="tab">
                   <img src={AddTabImgOn} />

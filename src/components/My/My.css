@@ -84,7 +84,31 @@
   text-align: center;
   border: 0.1px solid rgb(235, 235, 235);
   clear: both;
-  margin: 45px auto 0 auto;
+  margin: 45px auto 15px auto;
+}
+
+.postGridRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  width: 100%;
+}
+
+.postGridCell {
+  width: 84px;
+  display: inline-block;
+}
+
+.postGridCellMedia {
+  width: 100%;
+}
+
+.postGridCellDescription {
+  text-align: center;
+  margin: 3px auto;
+  width: 92px;
+  font-size: 15px;
+  color: #363636;
 }
 
 @media only screen and (min-width: 1000px) {

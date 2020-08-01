@@ -58,6 +58,7 @@ class HomeBody extends Component {
   joinRequest(post) {
     console.log("requested to join: ", post);
     try {
+      /* Add join requester's uid to post data */
       firestore
         .collection("posts")
         .doc(`${post.createdAt} ${post.media.name}`)
@@ -75,12 +76,28 @@ class HomeBody extends Component {
               this.componentDidMount();
             });
         });
+
+      /* Create join request notification data */
+      const createdAt = new Date().toISOString();
+      firestore
+        .collection("notifications")
+        .doc(`${post.media.name} ${this.state.user.uid}`)
+        .set({
+          post: {
+            docName: `${post.createdAt} ${post.media.name}`,
+            host: post.user.uid,
+          },
+          type: "join_request",
+          joinRequester: this.state.user,
+          createdAt,
+        });
     } catch (err) {
       console.error(err);
     }
   }
   cancelJoinRequest(post) {
     console.log("cancelling request to join: ", post);
+    /* remove join requester data from post data */
     try {
       firestore
         .collection("posts")
@@ -104,6 +121,21 @@ class HomeBody extends Component {
               console.log("join request successfully cancelled");
               this.componentDidMount();
             });
+        });
+    } catch (err) {
+      console.error(err);
+    }
+
+    /* remove join request nofication data */
+    try {
+      firestore
+        .collection("notifications")
+        .doc(`${post.media.name} ${this.state.user.uid}`)
+        .delete()
+        .then(() => {
+          console.log(
+            "join request notification data successfully deleted from firestore"
+          );
         });
     } catch (err) {
       console.error(err);
@@ -283,9 +315,8 @@ class HomeBody extends Component {
                       </div>
                     ) : (
                       <div
-                        className="joinRequestButton"
+                        className="cancelJoinRequestButton"
                         id={"cancelRequestButton" + index}
-                        style={{ backgroundColor: "blue" }}
                         onClick={() => {
                           if (
                             !post.joinRequested.includes(this.state.user.uid)
@@ -296,7 +327,7 @@ class HomeBody extends Component {
                           }
                         }}
                       >
-                        <p className="joinRequestText">참여 신청 취소</p>
+                        <p className="cancelJoinRequestText">참여 신청 취소</p>
                       </div>
                     )}
                   </div>
