@@ -394,7 +394,7 @@ class Notification extends Component {
                   }}
                 >
                   <img
-                    src={notification.joinRequester.profileImageUrl}
+                    src={notification.post.host.profileImageUrl}
                     className="joinRequesterProfileImage"
                   />
                   <div className="notificationDescription">
