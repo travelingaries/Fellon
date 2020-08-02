@@ -50,6 +50,20 @@ class HomeBody extends Component {
         .delete()
         .then(() => {
           console.log("post data deleted from firestore");
+
+          // delete relevant notifications data
+          const notificationDeleteQuery = firestore
+            .collection("notifications")
+            .where(
+              "post.docName",
+              "==",
+              `${post.createdAt} ${post.media.name}`
+            );
+          notificationDeleteQuery.get().then((snapshot) => {
+            snapshot.forEach((doc) => {
+              doc.ref.delete();
+            });
+          });
         });
     } catch (err) {
       console.error(err);
@@ -84,13 +98,14 @@ class HomeBody extends Component {
                 .set({
                   post: {
                     docName: `${post.createdAt} ${post.media.name}`,
-                    host: post.user.uid,
+                    host: post.user,
                     title: post.title,
                     createdAt: post.createdAt,
                   },
                   type: "join_request",
                   joinRequester: this.state.user,
                   createdAt,
+                  relevantUsers: [post.user.uid],
                 });
 
               this.componentDidMount();
@@ -128,7 +143,9 @@ class HomeBody extends Component {
               /* remove join request nofication data */
               firestore
                 .collection("notifications")
-                .doc(`${post.media.name} ${this.state.user.uid}`)
+                .doc(
+                  `${post.createdAt} ${post.user.uid} ${this.state.user.uid}`
+                )
                 .delete()
                 .then(() => {
                   console.log(
@@ -265,12 +282,12 @@ class HomeBody extends Component {
                 <div className="postSummary">
                   <h4 className="postTitle">{post.title}</h4>
                   <p className="postDescription">
-                    #{post.participantsNum}명이_주최{"  "}#
+                    #{post.participantsNum}명이_주최{"  "}
                     {post.gender === 1
                       ? "#남성 "
                       : post.gender === 2
                       ? "#여성 "
-                      : "남녀혼성 "}
+                      : "#남녀혼성 "}
                     {"  "}#
                     {post.theme === "1"
                       ? "맛집"
@@ -292,21 +309,25 @@ class HomeBody extends Component {
                   <div className="joinRequestButtonDiv">
                     {/* Show Join or Cancel Request Button */}
                     {!post.joinRequested.includes(this.state.user.uid) ? (
-                      <div
-                        className="joinRequestButton"
-                        id={"joinRequestButton" + index}
-                        onClick={() => {
-                          if (
-                            !post.joinRequested.includes(this.state.user.uid)
-                          ) {
-                            this.joinRequest(post);
-                          } else {
-                            this.cancelJoinRequest(post);
-                          }
-                        }}
-                      >
-                        <p className="joinRequestText">참여 신청</p>
-                      </div>
+                      !post.matchedWith.includes(this.state.user.uid) ? (
+                        <div
+                          className="joinRequestButton"
+                          id={"joinRequestButton" + index}
+                          onClick={() => {
+                            if (
+                              !post.joinRequested.includes(this.state.user.uid)
+                            ) {
+                              this.joinRequest(post);
+                            } else {
+                              this.cancelJoinRequest(post);
+                            }
+                          }}
+                        >
+                          <p className="joinRequestText">참여 신청</p>
+                        </div>
+                      ) : (
+                        <p className="alreadyParticipatingText">참여중</p>
+                      )
                     ) : (
                       <div
                         className="cancelJoinRequestButton"

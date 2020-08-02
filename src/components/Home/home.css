@@ -135,6 +135,7 @@
 .joinRequestButtonDiv {
   width: 100%;
   height: 48px;
+  margin-bottom: 30px;
 }
 
 .joinRequestButton {
@@ -173,4 +174,11 @@
   font-weight: bold;
   color: #565656;
   margin: 8px auto 0px auto;
+}
+
+.alreadyParticipatingText {
+  margin-top: -4px;
+  text-align: center;
+  color: #565656;
+  font-weight: bold;
 }

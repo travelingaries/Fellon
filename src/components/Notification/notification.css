@@ -106,3 +106,47 @@
 .joinRequestPromptOptionNo {
   float: right;
 }
+
+.matchedWithRequesterPopup {
+  width: 280px;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -170px;
+  margin-left: -156px;
+  background-color: white;
+  display: none;
+  border-radius: 4px;
+  border: 1px solid #c0c0c0;
+  z-index: 5;
+  padding: 10px 16px;
+}
+
+.matchedWithHostPopup {
+  width: 280px;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -170px;
+  margin-left: -156px;
+  background-color: white;
+  display: none;
+  border-radius: 4px;
+  border: 1px solid #c0c0c0;
+  z-index: 5;
+  padding: 10px 16px;
+}
+
+.matchedWithPhoneNumberDiv {
+  width: 260px;
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 40px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+.matchedWithPhoneNumberDiv p {
+  margin: 12px 0px;
+}
