@@ -26,6 +26,11 @@ export default (
         ...state,
         notifications: action.notifications,
       };
+    case GET_USER_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.notifications,
+      };
     default:
       return state;
   }

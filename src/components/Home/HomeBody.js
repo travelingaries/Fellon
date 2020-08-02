@@ -73,23 +73,28 @@ class HomeBody extends Component {
             })
             .then(() => {
               console.log("join request successfully sent");
+
+              /* Create join request notification data */
+              const createdAt = new Date().toISOString();
+              firestore
+                .collection("notifications")
+                .doc(
+                  `${post.createdAt} ${post.user.uid} ${this.state.user.uid}`
+                )
+                .set({
+                  post: {
+                    docName: `${post.createdAt} ${post.media.name}`,
+                    host: post.user.uid,
+                    title: post.title,
+                    createdAt: post.createdAt,
+                  },
+                  type: "join_request",
+                  joinRequester: this.state.user,
+                  createdAt,
+                });
+
               this.componentDidMount();
             });
-        });
-
-      /* Create join request notification data */
-      const createdAt = new Date().toISOString();
-      firestore
-        .collection("notifications")
-        .doc(`${post.media.name} ${this.state.user.uid}`)
-        .set({
-          post: {
-            docName: `${post.createdAt} ${post.media.name}`,
-            host: post.user.uid,
-          },
-          type: "join_request",
-          joinRequester: this.state.user,
-          createdAt,
         });
     } catch (err) {
       console.error(err);
@@ -119,23 +124,20 @@ class HomeBody extends Component {
             })
             .then(() => {
               console.log("join request successfully cancelled");
+
+              /* remove join request nofication data */
+              firestore
+                .collection("notifications")
+                .doc(`${post.media.name} ${this.state.user.uid}`)
+                .delete()
+                .then(() => {
+                  console.log(
+                    "join request notification data successfully deleted from firestore"
+                  );
+                });
+
               this.componentDidMount();
             });
-        });
-    } catch (err) {
-      console.error(err);
-    }
-
-    /* remove join request nofication data */
-    try {
-      firestore
-        .collection("notifications")
-        .doc(`${post.media.name} ${this.state.user.uid}`)
-        .delete()
-        .then(() => {
-          console.log(
-            "join request notification data successfully deleted from firestore"
-          );
         });
     } catch (err) {
       console.error(err);
@@ -233,8 +235,8 @@ class HomeBody extends Component {
                       </h4>
                       <div className="postDeletePromptOptionsDiv">
                         <div
-                          className="postDeletePromptOption"
-                          id="postDeletePromptOptionYes"
+                          className="postDeletePromptOption postDeletePromptOptionYes"
+                          id={"postDeletePromptOptionYes" + index}
                           onClick={() => {
                             document.getElementById("scrim").click();
                             this.deletePost(post);
@@ -246,8 +248,8 @@ class HomeBody extends Component {
                           네
                         </div>
                         <div
-                          className="postDeletePromptOption"
-                          id="postDeletePromptOptionNo"
+                          className="postDeletePromptOption postDeletePromptOptionNo"
+                          id={"postDeletePromptOptionNo" + index}
                           onClick={() => {
                             document.getElementById("scrim").click();
                           }}
@@ -260,15 +262,7 @@ class HomeBody extends Component {
                 ) : (
                   <div></div>
                 )}
-                <div
-                  className="postSummary"
-                  onClick={() => {
-                    var list = document.getElementsByClassName("postOptions");
-                    for (var i = 0; i < list.length; i++) {
-                      list[i].style["display"] = "none";
-                    }
-                  }}
-                >
+                <div className="postSummary">
                   <h4 className="postTitle">{post.title}</h4>
                   <p className="postDescription">
                     #{post.participantsNum}명이_주최{"  "}#

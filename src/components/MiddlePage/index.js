@@ -51,6 +51,7 @@ class MiddlePage extends Component {
           }
         } catch (err) {
           console.error(err);
+          window.location.href = "/editProfile";
         }
       });
   }

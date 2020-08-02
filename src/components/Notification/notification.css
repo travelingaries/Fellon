@@ -1,3 +1,108 @@
 .regular-index {
   width: 480px;
 }
+
+#scrim {
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  opacity: 0.5;
+  z-index: 3;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+.notificationContainer {
+  min-height: 40px;
+  width: 100%;
+  padding: 10px 5px;
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.joinRequesterProfileImage {
+  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  float: left;
+}
+
+.notificationDescription {
+  margin-left: 50px;
+}
+
+.notificationDescription p {
+  margin: 0 auto;
+}
+
+.joinRequestPrompt {
+  width: 280px;
+  height: 340px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -180px;
+  margin-left: -156px;
+  background-color: white;
+  display: none;
+  border-radius: 4px;
+  border: 1px solid #c0c0c0;
+  z-index: 5;
+  padding: 10px 16px;
+}
+
+.joinRequesterDetails {
+  margin-top: 20px;
+}
+
+.joinRequesterProfileImageDetailed {
+  border-radius: 100%;
+  width: 120px;
+  height: 120px;
+  float: left;
+}
+
+.joinRequesterProfileDescription {
+  margin-left: 146px;
+  padding-top: 6px;
+}
+
+.joinRequesterProfileDescription p {
+  font-size: 16px;
+}
+
+.joinRequestPromptOptionsDiv {
+  width: 260px;
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 40px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.joinRequestPromptOption {
+  display: inline-block;
+  width: 110px;
+  background-color: white;
+  border: 1px solid #c0c0c0;
+  text-align: center;
+  padding: 8px 5px;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #363636;
+}
+.joinRequestPromptOption:hover {
+  cursor: pointer;
+}
+
+.joinRequestPromptOptionYes {
+  float: left;
+  color: rgb(255, 85, 117);
+  border: 1px solid rgb(255, 85, 117);
+}
+
+.joinRequestPromptOptionNo {
+  float: right;
+}

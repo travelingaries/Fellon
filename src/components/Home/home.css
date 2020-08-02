@@ -122,11 +122,11 @@
   cursor: pointer;
 }
 
-#postDeletePromptOptionYes {
+.postDeletePromptOptionYes {
   float: left;
 }
 
-#postDeletePromptOptionNo {
+.postDeletePromptOptionNo {
   float: right;
   color: rgb(255, 85, 117);
   border: 1px solid rgb(255, 85, 117);
@@ -142,7 +142,7 @@
   width: 98%;
   margin: 0 auto;
   border-radius: 4px;
-  border: 1px solid #c0c0c0;
+  border: 1px solid rgb(255, 85, 117);
 }
 .joinRequestButton:hover {
   cursor: pointer;

@@ -2,6 +2,7 @@ import {
   GET_ALL_POSTS,
   GET_USER_POSTS,
   GET_JOIN_REQUEST_NOTIFICATIONS,
+  GET_USER_NOTIFICATIONS,
 } from "../actions/actionTypes";
 
 import firebase from "../config/config.js";
@@ -47,6 +48,25 @@ export const getUserPosts = () => async (dispatch) => {
     dispatch({
       type: GET_USER_POSTS,
       posts,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getUserNotifications = () => async (dispatch) => {
+  try {
+    const notifications = await firestore
+      .collection("notifications")
+      .where("relevantTo", "array-contains", firebase.auth().currentUser.uid)
+      .orderBy("createdAt", "desc")
+      .get()
+      .then((notifications) => {
+        return (notifications = notifications.docs.map((doc) => doc.data()));
+      });
+    dispatch({
+      type: GET_USER_NOTIFICATIONS,
+      notifications,
     });
   } catch (err) {
     console.error(err);
