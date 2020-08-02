@@ -121,7 +121,9 @@ class Upload extends Component {
     // handle media upload
     const { media } = this.state;
     console.log("media: ", this.state.media);
-    const storageRef = storage.ref(`userPosts/${this.state.media.name}`);
+    const mediaNameToStore =
+      this.state.user.uid + new Date().toISOString() + this.state.media.name;
+    const storageRef = storage.ref(`userPosts/${mediaNameToStore}`);
     const uploadTask = storageRef.put(this.state.media);
     uploadTask.on(
       "state_changed",
@@ -155,9 +157,13 @@ class Upload extends Component {
 
               const conciseUserData = {
                 uid: this.state.user.uid,
+                username: this.state.user.username,
+                phoneNumber: this.state.user.phoneNumber,
+                age: this.state.user.age,
+                gender: this.state.user.gender,
               };
               const mediaData = {
-                name: this.state.media.name,
+                name: mediaNameToStore,
                 url,
                 contentType: metadata.contentType,
               };
@@ -175,10 +181,11 @@ class Upload extends Component {
               console.log("posting data: ", postData);
               firestore
                 .collection("posts")
-                .doc(`${createdAt + " " + this.state.media.name}`)
+                .doc(`${createdAt + " " + mediaNameToStore}`)
                 .set(postData)
                 .then(() => {
                   console.log("post data saved");
+                  window.location.href = "/";
                   /*
                   const concisePostData = {
                     gender: postData.gender,

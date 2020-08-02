@@ -58,7 +58,7 @@ export const getUserNotifications = () => async (dispatch) => {
   try {
     const notifications = await firestore
       .collection("notifications")
-      .where("relevantTo", "array-contains", firebase.auth().currentUser.uid)
+      .where("relevantUsers", "array-contains", firebase.auth().currentUser.uid)
       .orderBy("createdAt", "desc")
       .get()
       .then((notifications) => {

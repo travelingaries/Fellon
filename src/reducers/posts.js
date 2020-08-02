@@ -2,6 +2,7 @@ import {
   GET_ALL_POSTS,
   GET_USER_POSTS,
   GET_JOIN_REQUEST_NOTIFICATIONS,
+  GET_USER_NOTIFICATIONS,
 } from "../actions/actionTypes";
 
 export default (
