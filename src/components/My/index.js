@@ -110,7 +110,7 @@ class My extends Component {
           className="settingsModal"
           overlayClassName="settingsOverlay"
           ariaHideApp="false"
-          style={{ overlay: { background: "#a0a0a0" }, zIndex: "50000" }}
+          style={{ overlay: { background: "rgba(200, 200, 200, 0.5)"}, zIndex: "50000" }}
         >
           <div className="settingsModalContent">
             <div>
@@ -188,7 +188,7 @@ class My extends Component {
         <div className="container">
           <div
             className="myTabBody"
-            style={{ display: this.state.showModal ? "none" : "block" }}
+            style={{ display: "block" }}
           >
             <div className="profileSummaryDiv">
               <div className="profileImageDiv">
