@@ -53,7 +53,8 @@ class My extends Component {
       .then(
         function () {
           console.log("Signed Out");
-          dispatch(logoutUser());
+          //dispatch(logoutUser());
+          window.location.href = "/start";
         },
         function (error) {
           console.error("Sign Out Error", error);

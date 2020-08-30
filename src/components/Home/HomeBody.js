@@ -282,13 +282,13 @@ class HomeBody extends Component {
                 <div className="postSummary">
                   <h4 className="postTitle">{post.title}</h4>
                   <p className="postDescription">
-                    #{post.participantsNum}명이_주최{"  "}
                     {post.gender === 1
-                      ? "#남성 "
+                      ? "#남자"
                       : post.gender === 2
-                      ? "#여성 "
-                      : "#남녀혼성 "}
-                    {"  "}#
+                      ? "#여자"
+                      : "#남녀혼성"}
+                    {"_"}
+                    {post.participantsNum}명{"  "}#
                     {post.theme === "1"
                       ? "맛집"
                       : post.theme === "2"

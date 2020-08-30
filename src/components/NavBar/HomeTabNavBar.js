@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 
 import backButton from "../../images/icoBack.png";
+import logoImg from "../../images/imgLogo_color@3x.png";
 
 class HomeTabNavBar extends Component {
   constructor(props) {
@@ -25,7 +26,10 @@ class HomeTabNavBar extends Component {
             display: "flex",
           }}
         >
-          <div onClick={this.handleClickSettings}>
+          <div
+            onClick={this.handleClickSettings}
+            style={{ visibility: "hidden" }}
+          >
             <img
               style={{
                 width: "20px",
@@ -44,7 +48,14 @@ class HomeTabNavBar extends Component {
               width: "100%",
             }}
           >
-            <h4 className="navCenterText">Home</h4>
+            <img
+              style={{
+                height: "24px",
+                textAlign: "center",
+                margin: "8px auto 0 auto",
+              }}
+              src={logoImg}
+            />
           </div>
         </nav>
       </div>
