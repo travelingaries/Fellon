@@ -19,6 +19,7 @@ class HomeBody extends Component {
     this.state = {
       posts: [],
       user: {},
+      vidCount: 0
     };
   }
 
@@ -31,6 +32,9 @@ class HomeBody extends Component {
     this.props.getAllPosts().then(() => {
       this.setState({ posts: this.props.posts }, () => {
         console.log("posts: ", this.state.posts);
+        for(var i=0;i<this.state.vidCount;i++){
+          document.getElementById("video"+i).currentTime=0.01;
+        }
       });
     });
   }
@@ -184,15 +188,22 @@ class HomeBody extends Component {
         ></div>
         {this.state.posts.length === 0 ? (
           <div className="nothingHere">
-            <h4 style={{ fontSize: "20px", textAlign: "center" }}>
-              아직 영상이 없네요
-            </h4>
-            <p>업로드탭에서 첫 번째 영상을 올려보세요!</p>
+            <div className="spinnerContainer">
+              <div className="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+      </div>
           </div>
         ) : (
           <div></div>
         )}
         {this.state.posts.map((post, index) => {
+          if(post.media.contentType.split("/")[0]==="video") {
+            this.state.vidCount++;
+          }
           return (
             <div
               className="postContainer"
@@ -202,8 +213,8 @@ class HomeBody extends Component {
               {post.media.contentType.split("/")[0] === "image" ? (
                 <img className="postMedia" src={post.media.url} />
               ) : post.media.contentType.split("/")[0] === "video" ? (
-                <video controls className="postMedia">
-                  <source src={post.media.url} type={post.media.contentType} />
+                <video controls className="postMedia" id={"video"+(this.state.vidCount-1)}>
+                  <source src={post.media.url} type="video/mp4" />
                 </video>
               ) : (
                 <div></div>
