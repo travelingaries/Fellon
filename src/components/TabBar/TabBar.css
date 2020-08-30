@@ -44,3 +44,7 @@ footer {
 .ready {
   background-color: yellow;
 }
+
+.tab img {
+  width: 24px;
+}

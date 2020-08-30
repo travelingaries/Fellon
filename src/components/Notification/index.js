@@ -187,6 +187,7 @@ class Notification extends Component {
     } else return phoneNumber;
   }
 
+
   render() {
     return (
       <div className="regular-index">
@@ -256,7 +257,7 @@ class Notification extends Component {
                     className="joinRequestPrompt notificationPrompt"
                     id={"joinRequestPrompt" + index}
                   >
-                    <h4>참여 신정자</h4>
+                    <h4>참여 신청자</h4>
                     <div className="joinRequesterDetails">
                       <img
                         className="joinRequesterProfileImageDetailed"
@@ -272,9 +273,8 @@ class Notification extends Component {
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
                           {notification.joinRequester.age === 1
                             ? "20대"
-                            : "30대"}
-                          <br />
-                          <span style={{ fontWeight: "bold" }}>성별</span>:{" "}
+                            : "30대"} / 
+                          <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.joinRequester.gender === 1
                             ? "남"
                             : "여"}
@@ -320,6 +320,9 @@ class Notification extends Component {
                     document.getElementById(
                       "matchedWithRequesterPopup" + index
                     ).style.display = "block";
+                    document.getElementById("requesterPhoneNumber").href="tel:"+`${this.convertToKoreanPhoneNumber(
+                      notification.joinRequester.phoneNumber
+                    )}`;
                   }}
                 >
                   <img
@@ -358,9 +361,8 @@ class Notification extends Component {
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
                           {notification.joinRequester.age === 1
                             ? "20대"
-                            : "30대"}
-                          <br />
-                          <span style={{ fontWeight: "bold" }}>성별</span>:{" "}
+                            : "30대"} /
+                          <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.joinRequester.gender === 1
                             ? "남"
                             : "여"}
@@ -369,11 +371,11 @@ class Notification extends Component {
                       </div>
                       <div className="matchedWithPhoneNumberDiv">
                         <h4>연락처</h4>
-                        <p>
+                        <a id="requesterPhoneNumber" class="phoneNumber"><p>
                           {this.convertToKoreanPhoneNumber(
                             notification.joinRequester.phoneNumber
                           )}
-                        </p>
+                        </p></a>
                       </div>
                     </div>
                   </div>
@@ -391,6 +393,9 @@ class Notification extends Component {
                     document.getElementById(
                       "matchedWithHostPopup" + index
                     ).style.display = "block";
+                    document.getElementById("hostPhoneNumber").href="tel:"+`${this.convertToKoreanPhoneNumber(
+                      notification.post.host.phoneNumber
+                    )}`;
                   }}
                 >
                   <img
@@ -432,20 +437,19 @@ class Notification extends Component {
                           <br />
                           <br />
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
-                          {notification.post.host.age === 1 ? "20대" : "30대"}
-                          <br />
-                          <span style={{ fontWeight: "bold" }}>성별</span>:{" "}
+                          {notification.post.host.age === 1 ? "20대" : "30대"} /
+                          <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.post.host.gender === 1 ? "남" : "여"}
                           <br />
                         </p>
                       </div>
                       <div className="matchedWithPhoneNumberDiv">
                         <h4>연락처</h4>
-                        <p>
+                        <a id="hostPhoneNumber" class="phoneNumber"><p>
                           {this.convertToKoreanPhoneNumber(
                             notification.post.host.phoneNumber
                           )}
-                        </p>
+                        </p></a>
                       </div>
                     </div>
                   </div>

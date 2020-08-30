@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import UploadTabTabBar from "./UploadTabTabBar";
 import "./TabBar.css";
 
-import MyTabImgOn from "../../images/icoMyOn.png";
-import MyTabImgOff from "../../images/icoMyOff.png";
-import NotificationTabImgOff from "../../images/icoAlarmOff.png";
-import NotificationTabImgOn from "../../images/icoAlarmOn.png";
-import AddTabImgOn from "../../images/icoAdd.png";
+import MyTabImgOn from "../../images/icoMyOn@3x.png";
+import MyTabImgOff from "../../images/icoMyOff@3x.png";
+import NotificationTabImgOff from "../../images/icoAlarmOff@3x.png";
+import NotificationTabImgOn from "../../images/icoAlarmOn@3x.png";
+import AddTabImgOn from "../../images/icoAdd@3x.png";
 import SearchTabImgOff from "../../images/icoSearchOff.png";
 import SearchTabImgOn from "../../images/icoSearchOn.png";
 import HomeTabImgOff from "../../images/icoHomeOff.png";
