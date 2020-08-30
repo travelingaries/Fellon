@@ -21,7 +21,7 @@ const validationSchema = yup.object({
     .matches(nameRegex, "닉네임은 한글, 영문 소문자, 또는 숫자만 가능합니다.")
     .required("닉네임을 입력해주세요")
     .max(16, "닉네임은 16자까지만 가능합니다"),
-  age: yup.number().min(1).max(2).required(),
+  age: yup.number().min(1).max(3).required(),
   gender: yup.number().min(1).max(2).required(),
 });
 
@@ -175,7 +175,7 @@ class EditProfile extends Component {
   }
   submitUserData(data) {
     const { username } = data;
-    const age = parseInt(data.gender);
+    const age = parseInt(data.age);
     const gender = parseInt(data.gender);
     const userData = {
       username,
@@ -322,9 +322,17 @@ class EditProfile extends Component {
                     type="radio"
                     value="2"
                     as={Radio}
-                    style={{ marginLeft: "20%" }}
+                    style={{ marginLeft: "5%" }}
                   />{" "}
                   <label>30대</label>
+                  <Field
+                    name="age"
+                    type="radio"
+                    value="3"
+                    as={Radio}
+                    style={{ marginLeft: "5%" }}
+                  />{" "}
+                  <label>40대</label>
                   <div className="nextSignUpButton">
                     <Button
                       disabled={isSubmitting}
