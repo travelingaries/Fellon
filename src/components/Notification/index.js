@@ -273,7 +273,7 @@ class Notification extends Component {
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
                           {notification.joinRequester.age === 1
                             ? "20대"
-                            : "30대"} / 
+                            : (notification.joinRequester.age === 2 ? "30대": "40대")} / 
                           <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.joinRequester.gender === 1
                             ? "남"
@@ -361,7 +361,7 @@ class Notification extends Component {
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
                           {notification.joinRequester.age === 1
                             ? "20대"
-                            : "30대"} /
+                            : (notification.joinRequester.age===2?"30대":"40대")} /
                           <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.joinRequester.gender === 1
                             ? "남"
@@ -437,7 +437,7 @@ class Notification extends Component {
                           <br />
                           <br />
                           <span style={{ fontWeight: "bold" }}>나이</span>:{" "}
-                          {notification.post.host.age === 1 ? "20대" : "30대"} /
+                          {notification.post.host.age === 1 ? "20대" : (notification.post.host.age===2?"30대":"40대")} /
                           <span style={{ fontWeight: "bold" }}> 성별</span>:{" "}
                           {notification.post.host.gender === 1 ? "남" : "여"}
                           <br />

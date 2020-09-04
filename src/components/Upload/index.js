@@ -302,6 +302,7 @@ class Upload extends Component {
                       required
                       placeholder="최대 12글자 (예: 치맥 벙개)"
                       className="textField"
+                      id="titleField"
                     />
                   </div>
                 </div>

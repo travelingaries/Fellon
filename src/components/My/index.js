@@ -200,7 +200,7 @@ class My extends Component {
               <div className="profileTextDiv">
                 <h3>{this.state.user.username}</h3>
                 <h6>
-                  {this.state.user.age === 1 ? "20" : "30"}대 /{" "}
+                  {this.state.user.age === 1 ? "20" : (this.state.user.age === 2 ? "30" : "40")}대 /{" "}
                   {this.state.user.gender === 1 ? "남" : "여"}
                 </h6>
               </div>
