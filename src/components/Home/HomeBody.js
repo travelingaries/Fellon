@@ -30,6 +30,9 @@ class HomeBody extends Component {
     this.props.getCurrentUserInfo().then(() => {
       this.setState({ user: this.props.user }, () => {
         console.log(`logged in as ${this.state.user.username}`);
+        if(this.state.user.profileImageUrl==null||this.state.user.profileImageUrl==""){
+          window.location.href="/editProfile";
+        }
       });
     });
     this.props.getAllPosts().then(() => {
