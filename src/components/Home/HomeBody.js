@@ -3,6 +3,9 @@ import React, { Component } from "react";
 import "./home.css";
 
 import threeDotsButton from "../../images/icoThreeDots.png";
+import joinRequestButton from "../../images/joinRequestButton.png";
+import joinRequestedButton from "../../images/joinRequestedButton.png";
+import joinedButton from "../../images/joinedButton.png";
 
 import { connect } from "react-redux";
 import { getCurrentUserInfo, getAllPosts } from "../../actions";
@@ -33,7 +36,10 @@ class HomeBody extends Component {
       this.setState({ posts: this.props.posts }, () => {
         console.log("posts: ", this.state.posts);
         for(var i=0;i<this.state.vidCount;i++){
-          document.getElementById("video"+i).currentTime=0.01;
+          try {
+            document.getElementById("video"+i).currentTime=0.01;
+          } catch(err){
+          }
         }
       });
     });
@@ -219,6 +225,58 @@ class HomeBody extends Component {
               ) : (
                 <div></div>
               )}
+              {/* If not own post, show join request button */}
+              {post.user.uid !== this.state.user.uid ? (
+                <div>
+                  <div className="joinRequestButtonDiv">
+                    {/* Show Join or Cancel Request Button */}
+                    {!post.joinRequested.includes(this.state.user.uid) ? (
+                      !post.matchedWith.includes(this.state.user.uid) ? (
+                        <div
+                          className="joinRequestButton"
+                          id={"joinRequestButton" + index}
+                          onClick={() => {
+                            if (
+                              !post.joinRequested.includes(this.state.user.uid)
+                            ) {
+                              this.joinRequest(post);
+                            } else {
+                              this.cancelJoinRequest(post);
+                            }
+                          }}
+                        >
+                          <img className="joinRequestButtonImg" src={joinRequestButton}/>
+                        </div>
+                      ) : (
+                        <img className="cancelRequestButtonImg" src={joinedButton}/>
+                      )
+                    ) : (
+                      <div
+                        className="cancelJoinRequestButton"
+                        id={"cancelRequestButton" + index}
+                        onClick={() => {
+                          if (
+                            !post.joinRequested.includes(this.state.user.uid)
+                          ) {
+                            this.joinRequest(post);
+                          } else {
+                            this.cancelJoinRequest(post);
+                          }
+                        }}
+                      >
+                        <img className="joinRequestedButtonImg" src={joinRequestedButton}/>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: "14px",
+                    width: "100%",
+                  }}
+                ></div>
+              )}
               <div className="postSummaryContainer">
                 <img
                   src={post.user.profileImageUrl}
@@ -314,58 +372,6 @@ class HomeBody extends Component {
                   </p>
                 </div>
               </div>
-              {/* If not own post, show join request button */}
-              {post.user.uid !== this.state.user.uid ? (
-                <div>
-                  <div className="joinRequestButtonDiv">
-                    {/* Show Join or Cancel Request Button */}
-                    {!post.joinRequested.includes(this.state.user.uid) ? (
-                      !post.matchedWith.includes(this.state.user.uid) ? (
-                        <div
-                          className="joinRequestButton"
-                          id={"joinRequestButton" + index}
-                          onClick={() => {
-                            if (
-                              !post.joinRequested.includes(this.state.user.uid)
-                            ) {
-                              this.joinRequest(post);
-                            } else {
-                              this.cancelJoinRequest(post);
-                            }
-                          }}
-                        >
-                          <p className="joinRequestText">참여 신청</p>
-                        </div>
-                      ) : (
-                        <p className="alreadyParticipatingText">참여중</p>
-                      )
-                    ) : (
-                      <div
-                        className="cancelJoinRequestButton"
-                        id={"cancelRequestButton" + index}
-                        onClick={() => {
-                          if (
-                            !post.joinRequested.includes(this.state.user.uid)
-                          ) {
-                            this.joinRequest(post);
-                          } else {
-                            this.cancelJoinRequest(post);
-                          }
-                        }}
-                      >
-                        <p className="cancelJoinRequestText">참여 신청 취소</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    height: "14px",
-                    width: "100%",
-                  }}
-                ></div>
-              )}
             </div>
           );
         })}
