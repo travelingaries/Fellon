@@ -160,7 +160,7 @@ class Upload extends Component {
                 username: this.state.user.username,
                 phoneNumber: this.state.user.phoneNumber,
                 age: this.state.user.age,
-                gender: this.state.user.gender,
+                gender: this.state.user.gender
               };
               const mediaData = {
                 name: mediaNameToStore,
@@ -186,28 +186,6 @@ class Upload extends Component {
                 .then(() => {
                   console.log("post data saved");
                   window.location.href = "/";
-                  /*
-                  const concisePostData = {
-                    gender: postData.gender,
-                    participantsNum: postData.participantsNum,
-                    theme: postData.theme,
-                    title: postData.title,
-                    media: mediaData,
-                    createdAt,
-                  };*/
-
-                  // Add post data to user document
-                  /*this.state.currentUserDoc.get().then((doc) => {
-                    const prevPosts = doc.data().posts;
-                    return this.state.currentUserDoc
-                      .update({
-                        posts: [...prevPosts, concisePostData],
-                      })
-                      .then(() => {
-                        console.log("added post data to user data");
-                        window.location.href = "/";
-                      });
-                  });*/
                 });
             });
           });
@@ -445,7 +423,7 @@ class Upload extends Component {
 
           <div className="elementDiv" id="selectNumAndGender">
             <div>
-              <h4>참여 가능 성별</h4>
+              <h4 id="genderSelectDivLabel">참여 가능 성별</h4>
               <div>
                 <div className="genderSelectDiv">
                   <div

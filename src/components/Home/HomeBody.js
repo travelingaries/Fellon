@@ -30,9 +30,6 @@ class HomeBody extends Component {
     this.props.getCurrentUserInfo().then(() => {
       this.setState({ user: this.props.user }, () => {
         console.log(`logged in as ${this.state.user.username}`);
-        if(this.state.user.profileImageUrl==null||this.state.user.profileImageUrl==""){
-          window.location.href="/editProfile";
-        }
       });
     });
     this.props.getAllPosts().then(() => {
@@ -103,6 +100,7 @@ class HomeBody extends Component {
 
               /* Create join request notification data */
               const createdAt = new Date().toISOString();
+              console.log("post.host: ",post.user);
               firestore
                 .collection("notifications")
                 .doc(
@@ -287,7 +285,7 @@ class HomeBody extends Component {
                 />
                 {/* If own post, show options */}
                 {post.user.uid === this.state.user.uid ? (
-                  <div>
+                  <div className="postOptionsButtonDivDiv">
                     <div
                       className="postOptionsButtonDiv"
                       onClick={() => {

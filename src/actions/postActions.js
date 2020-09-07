@@ -23,7 +23,9 @@ export const getAllPosts = () => async (dispatch) => {
         .doc(posts[i].user.uid)
         .get()
         .then((doc) => {
-          return doc.data().profileImageUrl;
+          if(doc.data().profileImageUrl)
+            return doc.data().profileImageUrl;
+          else return "https://firebasestorage.googleapis.com/v0/b/fellon-46901.appspot.com/o/profileImages%2Fno_user_photo.png?alt=media&token=8922884c-621b-4374-aa0e-f9b65d1408b2";
         });
     }
     dispatch({
